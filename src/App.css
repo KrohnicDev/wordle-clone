@@ -14,4 +14,24 @@
   margin: 3px;
   width: 30px;
   height: 30px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  text-transform: uppercase;
+}
+
+.current-guess {
+  border-width: 2px;
+}
+
+.incorrect {
+  background-color: lightgray;
+}
+
+.partially-correct {
+  background-color: yellow;
+}
+
+.correct {
+  background-color: green;
 }
