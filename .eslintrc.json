@@ -1,23 +1,19 @@
 {
   "root": true,
   "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended"
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:react-hooks/recommended"
   ],
   "parser": "@typescript-eslint/parser",
-  "parserOptions": { "project": ["./tsconfig.json"] },
-  "plugins": [
-      "@typescript-eslint"
-  ],
-  "rules": {
-      "@typescript-eslint/strict-boolean-expressions": [
-          2,
-          {
-              "allowString" : false,
-              "allowNumber" : false
-          }
-      ],
-      "@typescript-eslint/explicit-function-return-type": 2
+  "parserOptions": {
+    "project": ["./tsconfig.json"],
+    "ecmaFeatures": {
+      "jsx": true
+    }
   },
+  "plugins": ["@typescript-eslint", "react"],
   "ignorePatterns": ["src/**/*.test.ts", "src/frontend/generated/*"]
 }
