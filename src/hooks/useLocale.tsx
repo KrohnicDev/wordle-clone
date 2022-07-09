@@ -1,9 +1,9 @@
-import { useContext } from 'react'
-import { useState, useEffect, createContext, PropsWithChildren } from 'react'
+import { createContext, PropsWithChildren, useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DEFAULT_LOCALE } from '../lang/i18n'
 import { Locale } from '../types'
 import { valueOrThrow } from '../utils'
+import { useLocalStorage } from './useLocalStorage'
 
 interface UseLocale {
   locale: Locale
@@ -18,7 +18,7 @@ export function useLocale() {
 const LocaleContext = createContext<UseLocale | undefined>(undefined)
 
 export function LocaleProvider({ children }: PropsWithChildren<unknown>) {
-  const [locale, setLocale] = useState(DEFAULT_LOCALE)
+  const [locale, setLocale] = useLocalStorage('locale', DEFAULT_LOCALE)
   const { i18n } = useTranslation()
 
   useEffect(() => {
