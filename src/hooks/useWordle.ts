@@ -1,7 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { MAX_GUESSES, WORD_LENGTH } from '../contants'
-import { GameState, GuessError, INotification, Locale } from '../types'
+import {
+  GameState,
+  INotification,
+  Locale,
+  Validation,
+  ValidationError,
+} from '../types'
 import { getRandomWord, isValidChar, withoutLastChar } from '../utils'
 
 export interface UseWordle {
@@ -18,19 +25,16 @@ export function useWordle(locale: Locale): UseWordle {
   const [guesses, setGuesses] = useState<string[]>([])
   const [solution, setSolution] = useState('')
   const [validationError, setValidationError] = useState<INotification>()
-  const { data: words = [] } = useQuery(`words-${locale}`, () =>
-    fetchWords(locale)
+  const { t } = useTranslation()
+  const { data: words = [] } = useQuery(
+    `words-${locale}`,
+    () => fetchWords(locale),
+    { onSuccess: (words) => setSolution(getRandomWord(words)) }
   )
   const gameState = computeGameState(guesses, solution)
+  const notificationTimeout = useRef<NodeJS.Timeout>()
 
-  // Update solution after words have been fetched
-  useEffect(() => {
-    if (words.length > 0) {
-      setSolution(getRandomWord(words))
-    }
-  }, [words])
-
-  // Update current guess based on keyboard events
+  // Handle keyboard input
   useEffect(() => {
     function handleKeyPress(event: KeyboardEvent): void {
       const key = event.key
@@ -47,44 +51,61 @@ export function useWordle(locale: Locale): UseWordle {
     function handleWordSubmit(): void {
       const error = validateCurrentGuess()
 
-      if (error !== undefined) {
-        setCurrentGuess('')
-        setValidationError({
-          text: populateError(error, currentGuess),
-          type: 'warning',
-        })
-        setTimeout(clearValidationError, 5000)
-        return
-      }
-
-      clearValidationError()
-      submitCurrentGuess()
-    }
-
-    function validateCurrentGuess(): GuessError | void {
-      if (currentGuess.length !== WORD_LENGTH) {
-        return GuessError.TOO_SHORT
-      }
-
-      if (guesses.includes(currentGuess)) {
-        return GuessError.ALREADY_GUESSED
-      }
-
-      if (!words.includes(currentGuess)) {
-        return GuessError.INVALID_WORD
+      if (error) {
+        resetCurrentGuess()
+        setValidationError({ type: 'warning', text: getErrorMessage(error) })
+        clearTimeout(notificationTimeout.current)
+        notificationTimeout.current = setTimeout(clearValidationError, 5000)
+      } else {
+        setGuesses((previousGuesses) => [...previousGuesses, currentGuess])
+        clearValidationError()
+        resetCurrentGuess()
       }
     }
 
-    function submitCurrentGuess(): void {
-      if (gameState === GameState.IN_PROGRESS) {
-        setGuesses((arr) => [...arr, currentGuess])
-        setCurrentGuess('')
+    function validateCurrentGuess(): ValidationError | void {
+      const validators: Validation[] = [
+        [ValidationError.EMPTY_WORD, () => currentGuess.length === 0],
+        [ValidationError.TOO_SHORT, () => currentGuess.length < WORD_LENGTH],
+        [ValidationError.ALREADY_GUESSED, () => guesses.includes(currentGuess)],
+        [ValidationError.ILLEGAL_WORD, () => !words.includes(currentGuess)],
+      ]
+
+      for (const [error, isError] of validators) {
+        if (isError()) {
+          return error
+        }
+      }
+    }
+
+    function getErrorMessage(error: ValidationError): string {
+      const guessToUpperCase = currentGuess.toUpperCase()
+      const translationKey = `errors.validation.${error}`
+
+      switch (error) {
+        case ValidationError.EMPTY_WORD:
+          return t(translationKey)
+
+        case ValidationError.ILLEGAL_WORD:
+        case ValidationError.ALREADY_GUESSED:
+          return t(translationKey, { word: guessToUpperCase })
+
+        case ValidationError.TOO_SHORT:
+          return t(translationKey, {
+            word: guessToUpperCase,
+            actualLength: currentGuess.length,
+            requiredLength: WORD_LENGTH,
+          })
       }
     }
 
     document.addEventListener('keydown', handleKeyPress)
     return () => document.removeEventListener('keydown', handleKeyPress)
-  }, [currentGuess, gameState, guesses, words])
+  }, [currentGuess, gameState, guesses, t, words])
+
+  function resetCurrentGuess(): void {
+    setCurrentGuess('')
+  }
 
   function clearValidationError(): void {
     setValidationError(undefined)
@@ -92,8 +113,27 @@ export function useWordle(locale: Locale): UseWordle {
 
   function restartGame(): void {
     setGuesses([])
-    setCurrentGuess('')
+    resetCurrentGuess()
     setSolution(getRandomWord(words))
+  }
+
+  function getStatusNotification(): INotification | undefined {
+    const translationKey = `notification.status.${gameState}`
+
+    switch (gameState) {
+      case GameState.PLAYER_WON:
+        return {
+          type: 'success',
+          text: t(translationKey),
+        }
+      case GameState.GAME_OVER:
+        return {
+          type: 'error',
+          text: t(translationKey, { solution: solution.toUpperCase() }),
+        }
+      case GameState.IN_PROGRESS:
+        return undefined
+    }
   }
 
   return {
@@ -102,7 +142,7 @@ export function useWordle(locale: Locale): UseWordle {
     currentGuess,
     gameState,
     restartGame,
-    notification: validationError ?? getStatusNotification(gameState, solution),
+    notification: validationError ?? getStatusNotification(),
   }
 }
 
@@ -121,42 +161,4 @@ function computeGameState(guesses: string[], solution: string): GameState {
 async function fetchWords(locale: Locale): Promise<string[]> {
   const response = await fetch(`words_${locale}.json`)
   return (await response.json()) as string[]
-}
-
-function getStatusNotification(
-  state: GameState,
-  solution: string
-): INotification | undefined {
-  switch (state) {
-    case GameState.PLAYER_WON:
-      return {
-        type: 'success',
-        text: 'You win!',
-      }
-    case GameState.GAME_OVER:
-      return {
-        type: 'error',
-        text: `You lose! Solution was ${solution.toUpperCase()}`,
-      }
-    case GameState.IN_PROGRESS:
-      return undefined
-  }
-}
-
-function populateError(error: GuessError, guess: string): string {
-  const guessToUpperCase = guess.toUpperCase()
-  switch (error) {
-    case GuessError.INVALID_WORD:
-    case GuessError.ALREADY_GUESSED:
-      return error.replaceAll(v(1), guessToUpperCase)
-    case GuessError.TOO_SHORT:
-      return error
-        .replaceAll(v(1), guessToUpperCase)
-        .replaceAll(v(2), String(guess.length))
-        .replaceAll(v(3), String(WORD_LENGTH))
-  }
-
-  function v(n: number) {
-    return `{${n}}`
-  }
 }

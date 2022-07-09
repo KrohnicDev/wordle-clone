@@ -37,15 +37,13 @@ export default function WordleGrid(props: Props) {
   const currentGuessRow = (
     <WordRow
       word={withEmptyCells(currentGuess)}
-      renderCell={(char, i) => {
-        const isCurrentCell = currentGuess.length === i
-        return (
-          <CharacterCell
-            guessType={isCurrentCell ? 'current-guess' : 'empty'}
-            char={char}
-          />
-        )
-      }}
+      renderCell={(char, i) => (
+        <CharacterCell
+          guessType={'current-guess'}
+          char={char}
+          isCurrentCell={currentGuess.length === i}
+        />
+      )}
     />
   )
 

@@ -2,11 +2,19 @@ export function CharacterCell({
   char,
   guessType,
   status,
+  isCurrentCell,
 }: {
-  char?: string
   guessType: 'current-guess' | 'submitted' | 'empty'
+  char?: string
   status?: 'correct' | 'partially-correct' | 'incorrect'
+  isCurrentCell?: boolean
 }): JSX.Element {
-  const statusClass = status === undefined ? '' : status
-  return <div className={`cell ${guessType} ${statusClass}`}>{char}</div>
+  return (
+    <div
+      className={`cell ${guessType} ${status ?? ''}`}
+      id={isCurrentCell ? 'current-cell' : undefined}
+    >
+      {isCurrentCell ? <span className='blink'>_</span> : char}
+    </div>
+  )
 }

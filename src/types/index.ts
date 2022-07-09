@@ -1,7 +1,7 @@
 export enum GameState {
-  IN_PROGRESS,
-  GAME_OVER,
-  PLAYER_WON,
+  IN_PROGRESS = 'inProgress',
+  GAME_OVER = 'gameOver',
+  PLAYER_WON = 'playerWon',
 }
 
 export interface INotification {
@@ -9,13 +9,16 @@ export interface INotification {
   text: string
 }
 
-export enum GuessError {
-  INVALID_WORD = `{1} is not a valid word`,
-  TOO_SHORT = `Word {1} is too short ({2}/{3} characters)`,
-  ALREADY_GUESSED = `Word {1} has already been guessed`,
+export enum ValidationError {
+  EMPTY_WORD = 'emptyWord',
+  ILLEGAL_WORD = 'invalidWord',
+  TOO_SHORT = 'tooShort',
+  ALREADY_GUESSED = 'alreadyGuessed',
 }
 
 export enum Locale {
   FI = 'fi',
   EN = 'en',
 }
+
+export type Validation = [error: ValidationError, condition: () => boolean]
