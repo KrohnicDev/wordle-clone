@@ -1,4 +1,4 @@
-import { MAX_GUESSES, WORD_LENGTH } from '../contants'
+import { MAX_GUESSES, WORD_LENGTH } from '../constants'
 import { GameState } from '../types'
 import { range } from '../utils'
 import { CharacterCell } from './CharacterCell'

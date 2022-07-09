@@ -1,15 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from 'react-query'
-import { MAX_GUESSES, WORD_LENGTH } from '../contants'
-import {
-  GameState,
-  INotification,
-  Locale,
-  Validation,
-  ValidationError,
-} from '../types'
+import { MAX_GUESSES, WORD_LENGTH } from '../constants'
+import { GameState, INotification, Validation, ValidationError } from '../types'
 import { getRandomWord, isValidChar, withoutLastChar } from '../utils'
+import { useWords } from './useWords'
 
 export interface UseWordle {
   solution: string
@@ -20,17 +14,37 @@ export interface UseWordle {
   restartGame(): void
 }
 
-export function useWordle(locale: Locale): UseWordle {
+export function useWordle(): UseWordle {
   const [currentGuess, setCurrentGuess] = useState('')
   const [guesses, setGuesses] = useState<string[]>([])
-  const [solution, setSolution] = useState('')
   const [validationError, setValidationError] = useState<INotification>()
   const { t } = useTranslation()
-  const { data: words = [] } = useQuery(
-    `words-${locale}`,
-    () => fetchWords(locale),
-    { onSuccess: (words) => setSolution(getRandomWord(words)) }
+  const { words, solutions } = useWords()
+  const [solution, setSolution] = useState('')
+
+  const restartGame = useCallback(() => {
+    setGuesses([])
+    clearCurrentGuess()
+    clearValidationError()
+  }, [])
+
+  const selectNewSolution = useCallback(
+    (wordList = solutions) => {
+      const newSolution = getRandomWord(wordList)
+      if (wordList.length > 0) {
+        console.log('Solution:', newSolution)
+        setSolution(newSolution)
+      }
+    },
+    [solutions]
   )
+
+  // Restart game when solution list changes (i.e. language is changed)
+  useEffect(() => {
+    selectNewSolution(solutions)
+    restartGame()
+  }, [selectNewSolution, restartGame, solutions])
+
   const gameState = computeGameState(guesses, solution)
   const notificationTimeout = useRef<NodeJS.Timeout>()
 
@@ -40,7 +54,7 @@ export function useWordle(locale: Locale): UseWordle {
       const key = event.key
 
       if (isValidChar(currentGuess, key)) {
-        setCurrentGuess((guess) => guess.concat(key.toLowerCase()))
+        setCurrentGuess((guess) => guess + key.toLowerCase())
       } else if (key === 'Enter') {
         handleWordSubmit()
       } else if (key === 'Backspace') {
@@ -52,14 +66,14 @@ export function useWordle(locale: Locale): UseWordle {
       const error = validateCurrentGuess()
 
       if (error) {
-        resetCurrentGuess()
-        setValidationError({ type: 'warning', text: getErrorMessage(error) })
+        clearCurrentGuess()
         clearTimeout(notificationTimeout.current)
+        setValidationError({ type: 'warning', text: getErrorMessage(error) })
         notificationTimeout.current = setTimeout(clearValidationError, 5000)
       } else {
         setGuesses((previousGuesses) => [...previousGuesses, currentGuess])
         clearValidationError()
-        resetCurrentGuess()
+        clearCurrentGuess()
       }
     }
 
@@ -103,7 +117,7 @@ export function useWordle(locale: Locale): UseWordle {
     return () => document.removeEventListener('keydown', handleKeyPress)
   }, [currentGuess, gameState, guesses, t, words])
 
-  function resetCurrentGuess(): void {
+  function clearCurrentGuess(): void {
     setCurrentGuess('')
   }
 
@@ -111,14 +125,8 @@ export function useWordle(locale: Locale): UseWordle {
     setValidationError(undefined)
   }
 
-  function restartGame(): void {
-    setGuesses([])
-    resetCurrentGuess()
-    setSolution(getRandomWord(words))
-  }
-
   function getStatusNotification(): INotification | undefined {
-    const translationKey = `notification.status.${gameState}`
+    const translationKey = `notifications.status.${gameState}`
 
     switch (gameState) {
       case GameState.PLAYER_WON:
@@ -156,9 +164,4 @@ function computeGameState(guesses: string[], solution: string): GameState {
   }
 
   return GameState.IN_PROGRESS
-}
-
-async function fetchWords(locale: Locale): Promise<string[]> {
-  const response = await fetch(`words_${locale}.json`)
-  return (await response.json()) as string[]
 }

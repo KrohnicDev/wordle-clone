@@ -1,4 +1,4 @@
-import { WORD_LENGTH } from '../contants'
+import { WORD_LENGTH } from '../constants'
 import { range } from '../utils'
 
 export function WordRow({

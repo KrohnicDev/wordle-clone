@@ -22,4 +22,7 @@ export const FINNISH_TRANSLATIONS: Translations = {
       gameOver: 'Hävisit pelin! Oikea sana olisi ollut {{ solution }}.',
     },
   },
+  buttons: {
+    restartGame: 'Uusi peli',
+  },
 }

@@ -78,3 +78,7 @@ h1 {
     color: transparent;
   }
 }
+
+label {
+  margin: 5px;
+}

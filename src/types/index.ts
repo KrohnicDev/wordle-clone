@@ -21,4 +21,8 @@ export enum Locale {
   EN = 'en',
 }
 
+export function isLocale(arg: unknown): arg is Locale {
+  return Object.values(Locale).some((locale) => arg === locale)
+}
+
 export type Validation = [error: ValidationError, condition: () => boolean]

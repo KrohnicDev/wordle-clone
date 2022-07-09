@@ -1,9 +1,11 @@
+import { useTranslation } from 'react-i18next'
 import { useWordle } from '../hooks/useWordle'
-import { GameState, Locale } from '../types'
+import { GameState } from '../types'
 import NotificationElement from './NotificationElement'
 import WordleGrid from './WordleGrid'
 
-export function WordleGame({ locale }: { locale: Locale }) {
+export function WordleGame() {
+  const { t } = useTranslation()
   const {
     currentGuess,
     gameState,
@@ -11,7 +13,7 @@ export function WordleGame({ locale }: { locale: Locale }) {
     notification,
     solution,
     restartGame,
-  } = useWordle(locale)
+  } = useWordle()
 
   return (
     <div className='game'>
@@ -28,7 +30,7 @@ export function WordleGame({ locale }: { locale: Locale }) {
         onClick={restartGame}
         hidden={gameState === GameState.IN_PROGRESS}
       >
-        Restart game
+        {t('buttons.restartGame')}
       </button>
     </div>
   )

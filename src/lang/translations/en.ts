@@ -3,7 +3,7 @@ import { UNIVERSAL_TRANSLATIONS } from './universal'
 export const ENGLISH_TRANSLATIONS = {
   title: 'Wordle Clone',
   language: {
-    select: 'Please select a language',
+    select: 'Select language',
     ...UNIVERSAL_TRANSLATIONS.language,
   },
   errors: {
@@ -19,5 +19,8 @@ export const ENGLISH_TRANSLATIONS = {
       playerWon: 'Congratulations! You won!',
       gameOver: 'You lose! Solution was {{ solution }}.',
     },
+  },
+  buttons: {
+    restartGame: 'Restart game',
   },
 }
