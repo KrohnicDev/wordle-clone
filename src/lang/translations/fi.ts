@@ -23,6 +23,6 @@ export const FINNISH_TRANSLATIONS: Translations = {
     },
   },
   buttons: {
-    restartGame: 'Uusi peli',
+    restartGame: 'Aloita alusta',
   },
 }

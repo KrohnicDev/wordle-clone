@@ -11,7 +11,7 @@ export type Translations = typeof ENGLISH_TRANSLATIONS
 
 export function initTranslations() {
   i18n.use(initReactI18next).init({
-    debug: true,
+    // debug: true,
     lng: DEFAULT_LOCALE,
     fallbackLng: DEFAULT_LOCALE,
     resources: {

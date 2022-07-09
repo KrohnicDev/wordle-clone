@@ -1,6 +1,7 @@
+import { Box, Container, Divider, Stack } from '@mui/material'
+import Button from '@mui/material/Button'
 import { useTranslation } from 'react-i18next'
 import { useWordle } from '../hooks/useWordle'
-import { GameState } from '../types'
 import NotificationElement from './NotificationElement'
 import WordleGrid from './WordleGrid'
 
@@ -16,7 +17,7 @@ export function WordleGame() {
   } = useWordle()
 
   return (
-    <div className='game'>
+    <Stack>
       <WordleGrid
         currentGuess={currentGuess}
         gameState={gameState}
@@ -26,12 +27,13 @@ export function WordleGame() {
 
       <NotificationElement notification={notification} />
 
-      <button
+      <Button
+        variant='contained'
         onClick={restartGame}
-        hidden={gameState === GameState.IN_PROGRESS}
+        disabled={guesses.length === 0 && currentGuess.length === 0}
       >
         {t('buttons.restartGame')}
-      </button>
-    </div>
+      </Button>
+    </Stack>
   )
 }

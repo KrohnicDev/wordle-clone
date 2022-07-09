@@ -14,7 +14,7 @@ export function CharacterCell({
       className={`cell ${guessType} ${status ?? ''}`}
       id={isCurrentCell ? 'current-cell' : undefined}
     >
-      {isCurrentCell ? <span className='blink'>_</span> : char}
+      {isCurrentCell ? <span className='blink'>_</span> : <span>{char}</span>}
     </div>
   )
 }

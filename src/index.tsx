@@ -7,9 +7,9 @@ import { LocaleProvider } from './hooks/useLocale'
 
 initTranslations()
 
-const ROOT = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
+const ROOT_ELEMENT = document.getElementById('root') as HTMLElement
 
-ROOT.render(
+ReactDOM.createRoot(ROOT_ELEMENT).render(
   <React.StrictMode>
     <QueryClientProvider client={new QueryClient()}>
       <LocaleProvider>

@@ -26,24 +26,18 @@ export function useWordle(): UseWordle {
     setGuesses([])
     clearCurrentGuess()
     clearValidationError()
-  }, [])
 
-  const selectNewSolution = useCallback(
-    (wordList = solutions) => {
-      const newSolution = getRandomWord(wordList)
-      if (wordList.length > 0) {
-        console.log('Solution:', newSolution)
-        setSolution(newSolution)
-      }
-    },
-    [solutions]
-  )
+    if (solutions.length > 0) {
+      const newSolution = getRandomWord(solutions)
+      console.log('Solution:', newSolution)
+      setSolution(newSolution)
+    }
+  }, [solutions])
 
   // Restart game when solution list changes (i.e. language is changed)
   useEffect(() => {
-    selectNewSolution(solutions)
     restartGame()
-  }, [selectNewSolution, restartGame, solutions])
+  }, [restartGame, solutions])
 
   const gameState = computeGameState(guesses, solution)
   const notificationTimeout = useRef<NodeJS.Timeout>()

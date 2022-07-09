@@ -1,3 +1,4 @@
+import { Alert } from '@mui/material'
 import { INotification } from '../types'
 
 interface Props {
@@ -5,9 +6,5 @@ interface Props {
 }
 
 export default function NotificationElement({ notification }: Props) {
-  return notification ? (
-    <div className={`notification ${notification.type}`}>
-      {notification.text}
-    </div>
-  ) : null
+  return notification ? <Alert>{notification.text}</Alert> : null
 }
