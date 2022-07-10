@@ -1,0 +1,17 @@
+.notification {
+  padding: 10px;
+  border: 2px solid black;
+  margin: 5px;
+ }
+ 
+ .success {
+   background-color: green;
+ }
+ 
+ .error {
+   background-color: indianred;
+ }
+ 
+ .warning {
+   background-color: orange;
+ }

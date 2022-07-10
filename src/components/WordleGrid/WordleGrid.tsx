@@ -1,8 +1,8 @@
-import { MAX_GUESSES, WORD_LENGTH } from '../constants'
-import { GameState } from '../types'
-import { range } from '../utils'
-import { CharacterCell } from './CharacterCell'
-import { WordRow } from './WordRow'
+import { MAX_GUESSES, WORD_LENGTH } from '../../constants'
+import { GameState } from '../../types'
+import { range } from '../../utils'
+import Cell from '../CharacterCell'
+import Row from '../WordRow'
 
 interface Props {
   guesses: string[]
@@ -11,12 +11,12 @@ interface Props {
   gameState: GameState
 }
 
-export default function WordleGrid(props: Props) {
+export function WordleGrid(props: Props) {
   const { guesses, solution, currentGuess, gameState } = props
   const emptyRowCount = MAX_GUESSES - guesses.length - 1
 
   const previousGuessRows = guesses.map((word) => (
-    <WordRow
+    <Row
       key={word}
       word={word}
       renderCell={(char, i) => {
@@ -27,18 +27,16 @@ export default function WordleGrid(props: Props) {
             ? 'partially-correct'
             : 'incorrect'
 
-        return (
-          <CharacterCell char={char} guessType='submitted' status={status} />
-        )
+        return <Cell char={char} guessType='submitted' status={status} />
       }}
     />
   ))
 
   const currentGuessRow = (
-    <WordRow
+    <Row
       word={withEmptyCells(currentGuess)}
       renderCell={(char, i) => (
-        <CharacterCell
+        <Cell
           guessType={'current-guess'}
           char={char}
           isCurrentCell={currentGuess.length === i}
@@ -66,6 +64,6 @@ function withEmptyCells(guess: string): string {
 
 function getEmptyRows(count: number): JSX.Element[] {
   return range(count).map((i) => (
-    <WordRow key={i} renderCell={() => <CharacterCell guessType='empty' />} />
+    <Row key={i} renderCell={() => <Cell guessType='empty' />} />
   ))
 }

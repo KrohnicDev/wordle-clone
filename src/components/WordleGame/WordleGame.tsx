@@ -1,9 +1,10 @@
-import { Box, Container, Divider, Stack } from '@mui/material'
+import { Stack } from '@mui/material'
 import Button from '@mui/material/Button'
 import { useTranslation } from 'react-i18next'
-import { useWordle } from '../hooks/useWordle'
-import NotificationElement from './NotificationElement'
-import WordleGrid from './WordleGrid'
+import { useWordle } from '../../hooks/useWordle'
+import Notification from '../NotificationElement'
+import Grid from '../WordleGrid'
+import './WordleGame.css'
 
 export function WordleGame() {
   const { t } = useTranslation()
@@ -18,14 +19,14 @@ export function WordleGame() {
 
   return (
     <Stack>
-      <WordleGrid
+      <Grid
         currentGuess={currentGuess}
         gameState={gameState}
         solution={solution}
         guesses={guesses}
       />
 
-      <NotificationElement notification={notification} />
+      <Notification notification={notification} />
 
       <Button
         variant='contained'
