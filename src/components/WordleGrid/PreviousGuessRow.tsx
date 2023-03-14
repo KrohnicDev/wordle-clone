@@ -7,20 +7,17 @@ interface Props {
 }
 
 export function PreviousGuessRow({ word, solution }: Props): JSX.Element {
-  function getCellStatus(index: number, char: string) {
-    return solution[index] === char
-      ? 'correct'
-      : solution.includes(char)
-      ? 'partially-correct'
-      : 'incorrect'
-  }
-
   return (
     <Row
       key={word}
       word={word}
       renderCell={(char, i) => {
-        const status = getCellStatus(i, char)
+        const status =
+          solution[i] === char
+            ? 'correct'
+            : solution.includes(char)
+            ? 'partially-correct'
+            : 'incorrect'
         return <Cell char={char} guessType='submitted' status={status} />
       }}
     />
