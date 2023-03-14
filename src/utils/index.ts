@@ -1,7 +1,7 @@
 import { WORD_LENGTH } from '../constants'
 
 export function range(size: number): number[] {
-  return Array.from(Array(size).keys())
+  return size > 0 ? Array.from(Array(size).keys()) : []
 }
 
 export function withoutLastChar(guess: string): string {

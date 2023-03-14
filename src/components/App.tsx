@@ -1,8 +1,8 @@
 import { Box } from '@mui/material'
 import { Container } from '@mui/system'
 import './App.css'
-import Header from './components/Header'
-import { WordleGame } from './components/WordleGame/WordleGame'
+import Header from './Header'
+import Game from './WordleGame'
 
 export default function App() {
   return (
@@ -10,7 +10,7 @@ export default function App() {
       <Box sx={{ p: 1, maxWidth: 350 }}>
         <Header />
         <Box sx={{ p: 1 }}>
-          <WordleGame />
+          <Game />
         </Box>
       </Box>
     </Container>

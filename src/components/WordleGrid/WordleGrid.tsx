@@ -3,6 +3,7 @@ import { GameState } from '../../types'
 import { range } from '../../utils'
 import Cell from '../CharacterCell'
 import Row from '../WordRow'
+import { PreviousGuessRow } from './PreviousGuessRow'
 
 interface Props {
   guesses: string[]
@@ -13,43 +14,27 @@ interface Props {
 
 export function WordleGrid(props: Props) {
   const { guesses, solution, currentGuess, gameState } = props
-  const emptyRowCount = MAX_GUESSES - guesses.length - 1
-
-  const previousGuessRows = guesses.map((word) => (
-    <Row
-      key={word}
-      word={word}
-      renderCell={(char, i) => {
-        const status =
-          solution[i] === char
-            ? 'correct'
-            : solution.includes(char)
-            ? 'partially-correct'
-            : 'incorrect'
-
-        return <Cell char={char} guessType='submitted' status={status} />
-      }}
-    />
-  ))
-
-  const currentGuessRow = (
-    <Row
-      word={withEmptyCells(currentGuess)}
-      renderCell={(char, i) => (
-        <Cell
-          guessType={'current-guess'}
-          char={char}
-          isCurrentCell={currentGuess.length === i}
-        />
-      )}
-    />
-  )
 
   return (
     <div className='grid'>
-      {previousGuessRows}
-      {gameState === GameState.IN_PROGRESS && currentGuessRow}
-      {emptyRowCount > 0 && getEmptyRows(emptyRowCount)}
+      {guesses.map((word) => (
+        <PreviousGuessRow key={word} word={word} solution={solution} />
+      ))}
+
+      {gameState === GameState.IN_PROGRESS && (
+        <Row
+          word={withEmptyCells(currentGuess)}
+          renderCell={(char, i) => (
+            <Cell
+              guessType={'current-guess'}
+              char={char}
+              isCurrentCell={currentGuess.length === i}
+            />
+          )}
+        />
+      )}
+
+      {emptyRows(MAX_GUESSES - guesses.length - 1)}
     </div>
   )
 }
@@ -62,7 +47,7 @@ function withEmptyCells(guess: string): string {
   return guess + emptyChars
 }
 
-function getEmptyRows(count: number): JSX.Element[] {
+function emptyRows(count: number): JSX.Element[] {
   return range(count).map((i) => (
     <Row key={i} renderCell={() => <Cell guessType='empty' />} />
   ))
