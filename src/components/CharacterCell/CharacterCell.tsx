@@ -9,12 +9,13 @@ interface Props {
 
 export function CharacterCell(props: Props): JSX.Element {
   const { char, guessType, status, isCurrentCell } = props
-  const id = isCurrentCell ? 'current-cell' : undefined
-  const className = `cell ${guessType} ${status ?? ''}`
   const cursorElement = <span className='blink'>_</span>
   const charElement = <span>{char}</span>
   return (
-    <div className={className} id={id}>
+    <div
+      className={`cell ${guessType} ${status ?? ''}`}
+      id={isCurrentCell ? 'current-cell' : undefined}
+    >
       {isCurrentCell ? cursorElement : charElement}
     </div>
   )

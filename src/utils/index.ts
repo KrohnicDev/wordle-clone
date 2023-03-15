@@ -8,7 +8,7 @@ export function withoutLastChar(guess: string): string {
   return guess.slice(0, guess.length - 1)
 }
 
-export function getRandomWord(words: string[]): string {
+export function selectRandomWord(words: string[]): string {
   return words[Math.floor(Math.random() * words.length)]
 }
 

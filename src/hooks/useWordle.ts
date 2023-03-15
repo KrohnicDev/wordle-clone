@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { MAX_GUESSES, WORD_LENGTH } from '../constants'
 import { GameState, INotification, Validation, ValidationError } from '../types'
-import { getRandomWord, isValidChar, withoutLastChar } from '../utils'
-import { useWords } from './useWords'
+import { selectRandomWord, isValidChar, withoutLastChar } from '../utils'
+import { useWordList } from './useWords'
 
 export interface UseWordle {
   solution: string
@@ -14,12 +14,12 @@ export interface UseWordle {
   restartGame(): void
 }
 
-export function useWordle(): UseWordle {
+export function useWordleGame(): UseWordle {
   const [currentGuess, setCurrentGuess] = useState('')
   const [guesses, setGuesses] = useState<string[]>([])
   const [validationError, setValidationError] = useState<INotification>()
   const { t } = useTranslation()
-  const { words, solutions } = useWords()
+  const { words, solutions } = useWordList()
   const [solution, setSolution] = useState('')
 
   const restartGame = useCallback(() => {
@@ -28,7 +28,7 @@ export function useWordle(): UseWordle {
     clearValidationError()
 
     if (solutions.length > 0) {
-      const newSolution = getRandomWord(solutions)
+      const newSolution = selectRandomWord(solutions)
       console.log('Solution:', newSolution)
       setSolution(newSolution)
     }

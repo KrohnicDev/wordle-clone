@@ -1,7 +1,7 @@
 export enum GameState {
-  IN_PROGRESS = 'inProgress',
-  GAME_OVER = 'gameOver',
-  PLAYER_WON = 'playerWon',
+  IN_PROGRESS = 'in progress',
+  GAME_OVER = 'game over',
+  PLAYER_WON = 'player won',
 }
 
 export interface INotification {

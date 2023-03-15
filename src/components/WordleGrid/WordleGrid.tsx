@@ -12,9 +12,12 @@ interface Props {
   gameState: GameState
 }
 
-export function WordleGrid(props: Props) {
-  const { guesses, solution, currentGuess, gameState } = props
-
+export function WordleGrid({
+  guesses,
+  solution,
+  currentGuess,
+  gameState,
+}: Props) {
   return (
     <div className='grid'>
       {guesses.map((word) => (
