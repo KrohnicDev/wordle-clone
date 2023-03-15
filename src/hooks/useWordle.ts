@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { MAX_GUESSES, WORD_LENGTH } from '../constants'
 import { GameState, INotification, Validation, ValidationError } from '../types'
 import { selectRandomWord, isValidChar, withoutLastChar } from '../utils'
-import { useWordList } from './useWords'
+import { useWordList } from './useWordList'
 
 export interface UseWordle {
   solution: string
@@ -39,7 +39,7 @@ export function useWordleGame(): UseWordle {
     restartGame()
   }, [restartGame, solutions])
 
-  const gameState = computeGameState(guesses, solution)
+  const gameState = determineGameState(guesses, solution)
   const notificationTimeout = useRef<NodeJS.Timeout>()
 
   // Handle keyboard input
@@ -148,7 +148,7 @@ export function useWordleGame(): UseWordle {
   }
 }
 
-function computeGameState(guesses: string[], solution: string): GameState {
+function determineGameState(guesses: string[], solution: string): GameState {
   if (guesses.length === MAX_GUESSES) {
     return GameState.GAME_OVER
   }
