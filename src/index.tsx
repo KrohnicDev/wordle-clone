@@ -4,6 +4,7 @@ import App from './components/App'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { initTranslations } from './lang/i18n'
 import { LocaleProvider } from './hooks/useLocale'
+import { WordleProvider } from './hooks/useWordleGame'
 
 initTranslations()
 
@@ -13,7 +14,9 @@ ReactDOM.createRoot(ROOT_ELEMENT).render(
   <React.StrictMode>
     <QueryClientProvider client={new QueryClient()}>
       <LocaleProvider>
-        <App />
+        <WordleProvider>
+          <App />
+        </WordleProvider>
       </LocaleProvider>
     </QueryClientProvider>
   </React.StrictMode>

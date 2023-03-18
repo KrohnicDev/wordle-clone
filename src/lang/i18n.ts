@@ -10,21 +10,19 @@ export const DEFAULT_LOCALE: Locale = 'en'
 // This makes sure that all translations have the same keys
 export type TranslationResource = typeof ENGLISH_TRANSLATIONS
 
-const RESOURCES: {
-  [L in Locale]: {
-    translation: TranslationResource
-  }
-} = {
-  fi: { translation: FINNISH_TRANSLATIONS },
-  en: { translation: ENGLISH_TRANSLATIONS },
-  se: { translation: SWEDISH_TRANSLATIONS },
-}
-
 export function initTranslations() {
+  // This makes sure that all locales have translation resources
+  type Resources = { [L in Locale]: { translation: TranslationResource } }
+
+  const resources: Resources = {
+    fi: { translation: FINNISH_TRANSLATIONS },
+    en: { translation: ENGLISH_TRANSLATIONS },
+    se: { translation: SWEDISH_TRANSLATIONS },
+  }
+
   i18n.use(initReactI18next).init({
-    // debug: true,
     lng: DEFAULT_LOCALE,
     fallbackLng: DEFAULT_LOCALE,
-    resources: RESOURCES,
+    resources,
   })
 }

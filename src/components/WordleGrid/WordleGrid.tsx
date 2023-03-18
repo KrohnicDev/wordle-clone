@@ -1,27 +1,17 @@
 import { MAX_GUESSES, WORD_LENGTH } from '../../constants'
+import { useWordleGame } from '../../hooks/useWordleGame'
 import { GameState } from '../../types'
 import { range } from '../../utils'
 import Cell from '../CharacterCell'
 import Row from '../WordRow'
 import { PreviousGuessRow } from './PreviousGuessRow'
 
-interface Props {
-  guesses: string[]
-  solution: string
-  currentGuess: string
-  gameState: GameState
-}
-
-export function WordleGrid({
-  guesses,
-  solution,
-  currentGuess,
-  gameState,
-}: Props) {
+export function WordleGrid() {
+  const { currentGuess, gameState, guesses } = useWordleGame()
   return (
     <div className='grid'>
       {guesses.map((word) => (
-        <PreviousGuessRow key={word} word={word} solution={solution} />
+        <PreviousGuessRow key={word} word={word} />
       ))}
 
       {gameState === GameState.IN_PROGRESS && (
@@ -37,7 +27,7 @@ export function WordleGrid({
         />
       )}
 
-      {emptyRows(MAX_GUESSES - guesses.length - 1)}
+      {makeEmptyRows(MAX_GUESSES - guesses.length - 1)}
     </div>
   )
 }
@@ -50,7 +40,7 @@ function withEmptyCells(guess: string): string {
   return guess + emptyChars
 }
 
-function emptyRows(count: number): JSX.Element[] {
+function makeEmptyRows(count: number): JSX.Element[] {
   return range(count).map((i) => (
     <Row key={i} renderCell={() => <Cell guessType='empty' />} />
   ))

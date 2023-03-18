@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  createContext,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useTranslation } from 'react-i18next'
 import { MAX_GUESSES, WORD_LENGTH } from '../constants'
 import { GameState, INotification, Validation, ValidationError } from '../types'
@@ -14,7 +22,17 @@ export interface UseWordle {
   restartGame(): void
 }
 
-export function useWordleGame(): UseWordle {
+const WORDLE_CONTEXT = createContext<UseWordle | undefined>(undefined)
+
+export function useWordleGame() {
+  const context = useContext(WORDLE_CONTEXT)
+  if (context) {
+    return context
+  }
+  throw new Error()
+}
+
+export function WordleProvider({ children }: PropsWithChildren<unknown>) {
   const [currentGuess, setCurrentGuess] = useState('')
   const [guesses, setGuesses] = useState<string[]>([])
   const [validationError, setValidationError] = useState<INotification>()
@@ -33,11 +51,6 @@ export function useWordleGame(): UseWordle {
       setSolution(newSolution)
     }
   }, [solutions])
-
-  // Restart game when solution list changes (i.e. language is changed)
-  useEffect(() => {
-    restartGame()
-  }, [restartGame, solutions])
 
   const gameState = determineGameState(guesses, solution)
   const notificationTimeout = useRef<NodeJS.Timeout>()
@@ -140,14 +153,20 @@ export function useWordleGame(): UseWordle {
     }
   }
 
-  return {
-    solution,
-    guesses,
-    currentGuess,
-    gameState,
-    restartGame,
-    notification: validationError ?? getStatusNotification(),
-  }
+  return (
+    <WORDLE_CONTEXT.Provider
+      value={{
+        solution,
+        guesses,
+        currentGuess,
+        gameState,
+        restartGame,
+        notification: validationError ?? getStatusNotification(),
+      }}
+    >
+      {children}
+    </WORDLE_CONTEXT.Provider>
+  )
 }
 
 function determineGameState(guesses: string[], solution: string): GameState {

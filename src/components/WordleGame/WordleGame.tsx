@@ -8,26 +8,11 @@ import './WordleGame.css'
 
 export function WordleGame() {
   const { t } = useTranslation()
-  const {
-    currentGuess,
-    gameState,
-    guesses,
-    notification,
-    solution,
-    restartGame,
-  } = useWordleGame()
-
+  const { currentGuess, guesses, notification, restartGame } = useWordleGame()
   return (
     <Stack>
-      <WordleGrid
-        currentGuess={currentGuess}
-        gameState={gameState}
-        solution={solution}
-        guesses={guesses}
-      />
-
+      <WordleGrid />
       <Notification notification={notification} />
-
       <Button
         variant='contained'
         onClick={restartGame}
