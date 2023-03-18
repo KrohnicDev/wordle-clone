@@ -16,13 +16,12 @@ export enum ValidationError {
   ALREADY_GUESSED = 'alreadyGuessed',
 }
 
-export enum Locale {
-  FI = 'fi',
-  EN = 'en',
-}
+export const LOCALES = ['fi', 'en', 'se'] as const
+
+export type Locale = typeof LOCALES[number]
 
 export function isLocale(arg: unknown): arg is Locale {
-  return Object.values(Locale).some((locale) => arg === locale)
+  return LOCALES.some((locale) => arg === locale)
 }
 
 export type Validation = [error: ValidationError, condition: () => boolean]

@@ -1,7 +1,7 @@
 import { MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useLocale } from '../../hooks/useLocale'
-import { isLocale, Locale } from '../../types'
+import { isLocale, Locale, LOCALES } from '../../types'
 
 export function LocaleSelect() {
   const { locale, setLocale } = useLocale()
@@ -18,8 +18,11 @@ export function LocaleSelect() {
 
   return (
     <Select label={t('language.select')} onChange={handleChange} value={locale}>
-      <MenuItem value={Locale.FI}>{t('language.fi')}</MenuItem>
-      <MenuItem value={Locale.EN}>{t('language.en')}</MenuItem>
+      {LOCALES.map((locale) => (
+        <MenuItem value={locale} key={locale}>
+          {t(`language.${locale}`)}
+        </MenuItem>
+      ))}
     </Select>
   )
 }

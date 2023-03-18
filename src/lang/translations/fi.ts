@@ -1,7 +1,7 @@
-import { Translations } from '../i18n'
+import { TranslationResource } from '../i18n'
 import { UNIVERSAL_TRANSLATIONS } from './universal'
 
-export const FINNISH_TRANSLATIONS: Translations = {
+export const FINNISH_TRANSLATIONS: TranslationResource = {
   title: 'Wordle-kopio',
   language: {
     select: 'Valitse kieli',
