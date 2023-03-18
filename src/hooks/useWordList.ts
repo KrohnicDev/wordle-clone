@@ -16,17 +16,16 @@ function useWordsQuery(prefix: 'words' | 'solutions') {
 
   const query = useQuery({
     queryKey: `${prefix}-${locale}`,
-    queryFn: fetchWords,
+    queryFn: () => fetchWordList(`${prefix}_${locale}.json`),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     retry: false,
   })
 
-  async function fetchWords() {
-    const fileName = `${prefix}_${locale}.json`
-    const res = await axios.get<string[]>(fileName)
-    return res.data
-  }
-
   return query.data
+}
+
+async function fetchWordList(fileName: string) {
+  const res = await axios.get<string[]>(fileName)
+  return res.data
 }

@@ -7,5 +7,7 @@ interface Props {
 }
 
 export function NotificationElement({ notification }: Props) {
-  return notification ? <Alert>{notification.text}</Alert> : null
+  return notification ? (
+    <Alert severity={notification.type}>{notification.text}</Alert>
+  ) : null
 }

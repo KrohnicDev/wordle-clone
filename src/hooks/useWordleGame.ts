@@ -62,7 +62,10 @@ export function useWordleGame(): UseWordle {
       if (error) {
         clearCurrentGuess()
         clearTimeout(notificationTimeout.current)
-        setValidationError({ type: 'warning', text: getErrorMessage(error) })
+        setValidationError({
+          type: 'warning',
+          text: composeErrorMessage(error),
+        })
         notificationTimeout.current = setTimeout(clearValidationError, 5000)
       } else {
         setGuesses((previousGuesses) => [...previousGuesses, currentGuess])
@@ -86,24 +89,23 @@ export function useWordleGame(): UseWordle {
       }
     }
 
-    function getErrorMessage(error: ValidationError): string {
-      const guessToUpperCase = currentGuess.toUpperCase()
+    function composeErrorMessage(error: ValidationError): string {
       const translationKey = `errors.validation.${error}`
-
       switch (error) {
-        case ValidationError.EMPTY_WORD:
+        case ValidationError.EMPTY_WORD: {
           return t(translationKey)
-
+        }
         case ValidationError.ILLEGAL_WORD:
-        case ValidationError.ALREADY_GUESSED:
-          return t(translationKey, { word: guessToUpperCase })
-
-        case ValidationError.TOO_SHORT:
+        case ValidationError.ALREADY_GUESSED: {
+          return t(translationKey, { word: currentGuess.toUpperCase() })
+        }
+        case ValidationError.TOO_SHORT: {
           return t(translationKey, {
-            word: guessToUpperCase,
+            word: currentGuess.toUpperCase(),
             actualLength: currentGuess.length,
             requiredLength: WORD_LENGTH,
           })
+        }
       }
     }
 
