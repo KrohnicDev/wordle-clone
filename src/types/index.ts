@@ -1,7 +1,8 @@
+// NOTE: Values used in translations
 export enum GameState {
-  IN_PROGRESS = 'in progress',
-  GAME_OVER = 'game over',
-  PLAYER_WON = 'player won',
+  IN_PROGRESS = 'inProgress',
+  LOSE = 'gameOver',
+  WIN = 'playerWon',
 }
 
 export interface INotification {
@@ -9,6 +10,7 @@ export interface INotification {
   text: string
 }
 
+// NOTE: Values used in translations
 export enum ValidationError {
   EMPTY_WORD = 'emptyWord',
   ILLEGAL_WORD = 'invalidWord',
@@ -16,12 +18,20 @@ export enum ValidationError {
   ALREADY_GUESSED = 'alreadyGuessed',
 }
 
+export interface ValidationErrorDto {
+  type: ValidationError
+  guess: string
+}
+
+export type Validator = [
+  error: ValidationError,
+  condition: (guess: string) => boolean
+]
+
 export const LOCALES = ['fi', 'en', 'se'] as const
 
-export type Locale = typeof LOCALES[number]
+export type Locale = (typeof LOCALES)[number]
 
 export function isLocale(arg: unknown): arg is Locale {
   return LOCALES.some((locale) => arg === locale)
 }
-
-export type Validation = [error: ValidationError, condition: () => boolean]

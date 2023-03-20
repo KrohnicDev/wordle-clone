@@ -1,14 +1,29 @@
 import axios from 'axios'
+import { createContext, PropsWithChildren, useContext } from 'react'
 import { useQuery } from 'react-query'
+import { valueOrThrow } from '../utils'
 import { useLocale } from './useLocale'
 
-export function useWordList() {
+interface WordData {
+  words: string[]
+  solutions: string[]
+}
+
+const WORD_CONTEXT = createContext<WordData | undefined>(undefined)
+
+/** Provides access to global word list context */
+export function useWordData() {
+  return valueOrThrow(useContext(WORD_CONTEXT))
+}
+
+export function DataProvider({ children }: PropsWithChildren<unknown>) {
   const words = useWordsQuery('words') ?? []
   const solutions = useWordsQuery('solutions') ?? words
-  return {
-    words,
-    solutions,
-  }
+  return (
+    <WORD_CONTEXT.Provider value={{ words, solutions }}>
+      {children}
+    </WORD_CONTEXT.Provider>
+  )
 }
 
 function useWordsQuery(prefix: 'words' | 'solutions') {
