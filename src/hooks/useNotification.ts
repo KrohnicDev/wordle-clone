@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { WORD_LENGTH } from '../constants'
 import {
-  GameState,
+  GamePhase,
   INotification,
   ValidationError,
   ValidationErrorDto,
@@ -10,23 +10,23 @@ import { useGameState } from './useWordleGame'
 
 export function useNotification(): INotification | undefined {
   const { t } = useTranslation()
-  const { phase: gameState, solution, error } = useGameState()
+  const { phase, solution, error } = useGameState()
 
   function getStatusNotification(): INotification | undefined {
-    const translationKey = `notifications.status.${gameState}`
+    const translationKey = `notifications.status.${phase}`
 
-    switch (gameState) {
-      case GameState.WIN:
+    switch (phase) {
+      case GamePhase.WIN:
         return {
           type: 'success',
           text: t(translationKey),
         }
-      case GameState.LOSE:
+      case GamePhase.LOSE:
         return {
           type: 'error',
           text: t(translationKey, { solution: solution.toUpperCase() }),
         }
-      case GameState.IN_PROGRESS:
+      case GamePhase.IN_PROGRESS:
         return undefined
     }
   }

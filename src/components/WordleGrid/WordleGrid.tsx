@@ -1,6 +1,6 @@
 import { MAX_GUESSES, WORD_LENGTH } from '../../constants'
 import { useGameState } from '../../hooks/useWordleGame'
-import { GameState } from '../../types'
+import { GamePhase } from '../../types'
 import { range } from '../../utils'
 import Cell from '../CharacterCell'
 import Row from '../WordRow'
@@ -14,7 +14,7 @@ export function WordleGrid() {
         <PreviousGuessRow key={word} word={word} />
       ))}
 
-      {gameState === GameState.IN_PROGRESS && (
+      {gameState === GamePhase.IN_PROGRESS && (
         <Row
           word={withEmptyCells(currentGuess)}
           renderCell={(char, i) => (

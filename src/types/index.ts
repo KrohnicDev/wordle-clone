@@ -1,5 +1,5 @@
 // NOTE: Values used in translations
-export enum GameState {
+export enum GamePhase {
   IN_PROGRESS = 'inProgress',
   LOSE = 'gameOver',
   WIN = 'playerWon',

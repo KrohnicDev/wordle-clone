@@ -1,18 +1,22 @@
 import { Stack } from '@mui/material'
 import Button from '@mui/material/Button'
 import { useTranslation } from 'react-i18next'
-import { useNotification } from '../../hooks/useNotification'
-import { useGameState } from '../../hooks/useWordleGame'
-import Notification from '../NotificationElement'
+import { DataProvider } from '../../hooks/useWordData'
+import { GameStateProvider, useGameState } from '../../hooks/useWordleGame'
+import NotificationElement from '../NotificationElement'
 import WordleGrid from '../WordleGrid'
 import './WordleGame.css'
 
 export function WordleGame() {
   return (
     <Stack>
-      <WordleGrid />
-      <Notification notification={useNotification()} />
-      <RestartGameButton />
+      <DataProvider>
+        <GameStateProvider>
+          <WordleGrid />
+          <NotificationElement />
+          <RestartGameButton />
+        </GameStateProvider>
+      </DataProvider>
     </Stack>
   )
 }

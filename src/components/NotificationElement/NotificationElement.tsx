@@ -1,12 +1,9 @@
-import './NotificationElement.css'
 import { Alert } from '@mui/material'
-import { INotification } from '../../types'
+import { useNotification } from '../../hooks/useNotification'
+import './NotificationElement.css'
 
-interface Props {
-  notification?: INotification
-}
-
-export function NotificationElement({ notification }: Props) {
+export function NotificationElement() {
+  const notification = useNotification()
   return notification ? (
     <Alert severity={notification.type}>{notification.text}</Alert>
   ) : null

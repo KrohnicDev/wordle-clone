@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react'
 import { MAX_GUESSES, WORD_LENGTH } from '../constants'
-import { GameState as GamePhase, ValidationErrorDto } from '../types'
+import { GamePhase, ValidationErrorDto } from '../types'
 import {
   isValidChar,
   selectRandomWord,
