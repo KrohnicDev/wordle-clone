@@ -1,5 +1,5 @@
 import { MAX_GUESSES, WORD_LENGTH } from '../../constants'
-import { useWordleGame } from '../../hooks/useWordleGame'
+import { useGameState } from '../../hooks/useWordleGame'
 import { GameState } from '../../types'
 import { range } from '../../utils'
 import Cell from '../CharacterCell'
@@ -7,7 +7,7 @@ import Row from '../WordRow'
 import { PreviousGuessRow } from './PreviousGuessRow'
 
 export function WordleGrid() {
-  const { currentGuess, gameState, guesses } = useWordleGame()
+  const { currentGuess, phase: gameState, guesses } = useGameState()
   return (
     <div className='grid'>
       {guesses.map((word) => (

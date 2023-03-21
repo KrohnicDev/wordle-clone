@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react'
 import { MAX_GUESSES, WORD_LENGTH } from '../constants'
-import { GameState, ValidationErrorDto } from '../types'
+import { GameState as GamePhase, ValidationErrorDto } from '../types'
 import {
   isValidChar,
   selectRandomWord,
@@ -16,46 +16,60 @@ import {
   withoutLastChar,
 } from '../utils'
 import { useGuessValidator } from './useGuessValidator'
+import { useLocale } from './useLocale'
 import { useWordData } from './useWordData'
 
-export interface UseWordle {
+export interface GameState {
   solution: string
   currentGuess: string
   guesses: string[]
-  gameState: GameState
+  phase: GamePhase
   error?: ValidationErrorDto
   restartGame(): void
 }
 
-const WORDLE_CONTEXT = createContext<UseWordle | undefined>(undefined)
+const GAME_CONTEXT = createContext<GameState | undefined>(undefined)
 
 /** Provides access to global game state context */
-export function useWordleGame() {
-  return valueOrThrow(useContext(WORDLE_CONTEXT))
+export function useGameState() {
+  return valueOrThrow(useContext(GAME_CONTEXT))
 }
 
-export function GameProvider({ children }: PropsWithChildren<unknown>) {
+export function GameStateProvider({ children }: PropsWithChildren<unknown>) {
+  const { locale } = useLocale()
   const [currentGuess, setCurrentGuess] = useState('')
-  const [solution, setSolution] = useState('')
+  const [solution, setSolution] = useState({ locale, word: '' })
   const [submittedGuesses, setSubmittedGuesses] = useState<string[]>([])
-  const { words, solutions } = useWordData()
+  const { words, solutions, isLoading } = useWordData()
 
   const [error, setError] = useState<ValidationErrorDto>()
   const errorTimeout = useRef<NodeJS.Timeout>()
 
-  const validateGuess = useGuessValidator(submittedGuesses)
-
-  const restartGame = useCallback(() => {
+  const startNewGame = useCallback(() => {
+    const newSolution = selectRandomWord(solutions)
+    setSolution({ locale, word: newSolution })
     setSubmittedGuesses([])
-    clearCurrentGuess()
-    clearValidationError()
+    setCurrentGuess('')
+    setError(undefined)
+    console.log(
+      `Started a new game (language: ${locale.toUpperCase()}, solution: ${newSolution.toUpperCase()})`
+    )
+  }, [locale, solutions])
 
-    if (solutions.length > 0) {
-      const newSolution = selectRandomWord(solutions)
-      console.log('Solution:', newSolution)
-      setSolution(newSolution)
+  // Handle automatic game restarts
+  useEffect(() => {
+    if (isLoading) {
+      console.log(`Loading ${locale.toUpperCase()} solutions...`)
+    } else if (solution.word === '') {
+      console.log('Starting the first game')
+      startNewGame()
+    } else if (solution.locale !== locale) {
+      console.log('Starting a new game due to language change')
+      startNewGame()
     }
-  }, [solutions])
+  }, [isLoading, locale, solution, solutions, startNewGame])
+
+  const validateGuess = useGuessValidator(submittedGuesses)
 
   // Handle keyboard input
   useEffect(() => {
@@ -67,13 +81,11 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
       } else if (key === 'Backspace') {
         setCurrentGuess(withoutLastChar)
       } else if (currentGuess.length >= WORD_LENGTH) {
-        console.log(
-          `Guess ${currentGuess} is already at max length (${WORD_LENGTH})`
-        )
+        console.log(`Guess ${currentGuess} is at max length (${WORD_LENGTH})`)
       } else if (isValidChar(key)) {
         setCurrentGuess((guess) => guess + key.toLowerCase())
       } else {
-        console.log('Invalid character: ', key)
+        console.debug('Invalid character: ', key)
       }
 
       function handleSubmit() {
@@ -81,12 +93,12 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
 
         if (validationError) {
           setError({ type: validationError, guess: currentGuess })
-          clearCurrentGuess()
+          setCurrentGuess('')
           clearTimeout(errorTimeout.current)
-          errorTimeout.current = setTimeout(clearValidationError, 5000)
+          errorTimeout.current = setTimeout(() => setError(undefined), 5000)
         } else {
-          clearValidationError()
-          clearCurrentGuess()
+          setError(undefined)
+          setCurrentGuess('')
           setSubmittedGuesses((previousGuesses) => [
             ...previousGuesses,
             currentGuess,
@@ -103,38 +115,32 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
     }
   }, [currentGuess, submittedGuesses, validateGuess, words])
 
-  function clearCurrentGuess(): void {
-    setCurrentGuess('')
-  }
-
-  function clearValidationError(): void {
-    setError(undefined)
-  }
-
-  function determineGameState() {
-    if (submittedGuesses.includes(solution)) {
-      return GameState.WIN
-    }
-
-    if (submittedGuesses.length === MAX_GUESSES) {
-      return GameState.LOSE
-    }
-
-    return GameState.IN_PROGRESS
-  }
-
-  const context: UseWordle = {
+  const context: GameState = {
     currentGuess,
-    gameState: determineGameState(),
+    phase: determineGamePhase(solution.word, submittedGuesses),
     guesses: submittedGuesses,
-    solution,
+    solution: solution.word,
     error,
-    restartGame,
+    restartGame: startNewGame,
+  }
+
+  if (isLoading) {
+    return null
   }
 
   return (
-    <WORDLE_CONTEXT.Provider value={context}>
-      {children}
-    </WORDLE_CONTEXT.Provider>
+    <GAME_CONTEXT.Provider value={context}>{children}</GAME_CONTEXT.Provider>
   )
+}
+
+function determineGamePhase(solution: string, submittedGuesses: string[]) {
+  if (submittedGuesses.includes(solution)) {
+    return GamePhase.WIN
+  }
+
+  if (submittedGuesses.length === MAX_GUESSES) {
+    return GamePhase.LOSE
+  }
+
+  return GamePhase.IN_PROGRESS
 }

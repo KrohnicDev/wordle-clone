@@ -1,4 +1,4 @@
-import { useWordleGame } from '../../hooks/useWordleGame'
+import { useGameState } from '../../hooks/useWordleGame'
 import Cell from '../CharacterCell'
 import Row from '../WordRow'
 
@@ -7,7 +7,7 @@ interface Props {
 }
 
 export function PreviousGuessRow({ word }: Props): JSX.Element {
-  const { solution } = useWordleGame()
+  const { solution } = useGameState()
   return (
     <Row
       key={word}

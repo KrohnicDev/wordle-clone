@@ -5,17 +5,16 @@ import { Locale } from '../types'
 import { valueOrThrow } from '../utils'
 import { useLocalStorage } from './useLocalStorage'
 
-interface UseLocale {
+interface LocaleContext {
   locale: Locale
   setLocale: (locale: Locale) => void
 }
 
 export function useLocale() {
-  return valueOrThrow(useContext(LocaleContext))
+  return valueOrThrow(useContext(LOCALE_CONTEXT))
 }
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-const LocaleContext = createContext<UseLocale | undefined>(undefined)
+const LOCALE_CONTEXT = createContext<LocaleContext | undefined>(undefined)
 
 export function LocaleProvider({ children }: PropsWithChildren<unknown>) {
   const [locale, setLocale] = useLocalStorage('locale', DEFAULT_LOCALE)
@@ -26,8 +25,8 @@ export function LocaleProvider({ children }: PropsWithChildren<unknown>) {
   }, [i18n, locale])
 
   return (
-    <LocaleContext.Provider value={{ locale, setLocale }}>
+    <LOCALE_CONTEXT.Provider value={{ locale, setLocale }}>
       {children}
-    </LocaleContext.Provider>
+    </LOCALE_CONTEXT.Provider>
   )
 }

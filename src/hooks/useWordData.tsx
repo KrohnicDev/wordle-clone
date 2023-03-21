@@ -7,6 +7,7 @@ import { useLocale } from './useLocale'
 interface WordData {
   words: string[]
   solutions: string[]
+  isLoading: boolean
 }
 
 const WORD_CONTEXT = createContext<WordData | undefined>(undefined)
@@ -17,27 +18,29 @@ export function useWordData() {
 }
 
 export function DataProvider({ children }: PropsWithChildren<unknown>) {
-  const words = useWordsQuery('words') ?? []
-  const solutions = useWordsQuery('solutions') ?? words
+  const wordsQuery = useWordsQuery('words')
+  const solutionsQuery = useWordsQuery('solutions')
+  const words = wordsQuery.data ?? []
+  const solutions = solutionsQuery.data ?? words
+  const context = {
+    words,
+    solutions,
+    isLoading: wordsQuery.isLoading || solutionsQuery.isLoading,
+  }
   return (
-    <WORD_CONTEXT.Provider value={{ words, solutions }}>
-      {children}
-    </WORD_CONTEXT.Provider>
+    <WORD_CONTEXT.Provider value={context}>{children}</WORD_CONTEXT.Provider>
   )
 }
 
 function useWordsQuery(prefix: 'words' | 'solutions') {
   const { locale } = useLocale()
-
-  const query = useQuery({
+  return useQuery({
     queryKey: `${prefix}-${locale}`,
     queryFn: () => fetchWordList(`${prefix}_${locale}.json`),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     retry: false,
   })
-
-  return query.data
 }
 
 async function fetchWordList(fileName: string) {

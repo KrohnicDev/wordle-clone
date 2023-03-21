@@ -6,11 +6,11 @@ import {
   ValidationError,
   ValidationErrorDto,
 } from '../types'
-import { useWordleGame } from './useWordleGame'
+import { useGameState } from './useWordleGame'
 
-export function useGameNotification(): INotification | undefined {
+export function useNotification(): INotification | undefined {
   const { t } = useTranslation()
-  const { gameState, solution, error } = useWordleGame()
+  const { phase: gameState, solution, error } = useGameState()
 
   function getStatusNotification(): INotification | undefined {
     const translationKey = `notifications.status.${gameState}`
