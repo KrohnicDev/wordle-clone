@@ -1,9 +1,5 @@
 // NOTE: Values used in translations
-export enum GamePhase {
-  IN_PROGRESS = 'inProgress',
-  LOSE = 'gameOver',
-  WIN = 'playerWon',
-}
+export type GamePhase = 'in-progress' | 'lose' | 'win'
 
 export interface INotification {
   type: 'success' | 'warning' | 'error'

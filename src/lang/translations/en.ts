@@ -16,8 +16,8 @@ export const ENGLISH_TRANSLATIONS = {
   },
   notifications: {
     status: {
-      playerWon: 'Congratulations! You won!',
-      gameOver: 'You lose! Solution was {{ solution }}.',
+      win: 'Congratulations! You won!',
+      lose: 'You lose! Solution was {{ solution }}.',
     },
   },
   buttons: {

@@ -18,9 +18,8 @@ export const SWEDISH_TRANSLATIONS: TranslationResource = {
   },
   notifications: {
     status: {
-      playerWon: 'Grattis! Du vann spelet!',
-      gameOver:
-        'Du förlorade spelet! Det rätta ordet skulle ha varit {{ solution }}.',
+      win: 'Grattis! Du vann spelet!',
+      lose: 'Du förlorade spelet! Det rätta ordet skulle ha varit {{ solution }}.',
     },
   },
   buttons: {

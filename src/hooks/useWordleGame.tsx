@@ -133,14 +133,15 @@ export function GameStateProvider({ children }: PropsWithChildren<unknown>) {
   )
 }
 
-function determineGamePhase(solution: string, submittedGuesses: string[]) {
+function determineGamePhase(
+  solution: string,
+  submittedGuesses: string[]
+): GamePhase {
   if (submittedGuesses.includes(solution)) {
-    return GamePhase.WIN
+    return 'win'
   }
-
   if (submittedGuesses.length === MAX_GUESSES) {
-    return GamePhase.LOSE
+    return 'lose'
   }
-
-  return GamePhase.IN_PROGRESS
+  return 'in-progress'
 }

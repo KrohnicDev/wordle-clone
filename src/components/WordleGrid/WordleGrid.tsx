@@ -1,20 +1,19 @@
 import { MAX_GUESSES, WORD_LENGTH } from '../../constants'
 import { useGameState } from '../../hooks/useWordleGame'
-import { GamePhase } from '../../types'
 import { range } from '../../utils'
 import Cell from '../CharacterCell'
 import Row from '../WordRow'
 import { PreviousGuessRow } from './PreviousGuessRow'
 
 export function WordleGrid() {
-  const { currentGuess, phase: gameState, guesses } = useGameState()
+  const { currentGuess, phase, guesses } = useGameState()
   return (
     <div className='grid'>
       {guesses.map((word) => (
         <PreviousGuessRow key={word} word={word} />
       ))}
 
-      {gameState === GamePhase.IN_PROGRESS && (
+      {phase === 'in-progress' && (
         <Row
           word={withEmptyCells(currentGuess)}
           renderCell={(char, i) => (

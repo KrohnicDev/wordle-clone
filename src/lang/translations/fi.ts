@@ -18,8 +18,8 @@ export const FINNISH_TRANSLATIONS: TranslationResource = {
   },
   notifications: {
     status: {
-      playerWon: 'Onnittelut! Voitit pelin!',
-      gameOver: 'Hävisit pelin! Oikea sana olisi ollut {{ solution }}.',
+      win: 'Onnittelut! Voitit pelin!',
+      lose: 'Hävisit pelin! Oikea sana olisi ollut {{ solution }}.',
     },
   },
   buttons: {
