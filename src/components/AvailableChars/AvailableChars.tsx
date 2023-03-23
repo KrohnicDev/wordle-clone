@@ -1,4 +1,4 @@
-import { LETTERS } from '../../constants'
+import { LOCAL_CHARS } from '../../constants'
 import { useAvailableChars } from '../../hooks/useAvailableChars'
 import { useLocale } from '../../hooks/useLocale'
 import './AvailableChars.css'
@@ -6,7 +6,7 @@ import './AvailableChars.css'
 export function AvailableChars() {
   const availableChars = useAvailableChars()
   const { locale } = useLocale()
-  const chars = LETTERS[locale]
+  const chars = LOCAL_CHARS[locale]
   return (
     <div>
       {chars.map((char) => {

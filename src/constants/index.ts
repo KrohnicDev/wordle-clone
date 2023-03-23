@@ -5,12 +5,12 @@ export const WORD_LENGTH = 5
 
 export const MAX_GUESSES = 6
 
-const ENGLISH_LETTERS = 'abcdefghijklmnopqrstuvwxyz'
-const FINNISH_LETTERS = ENGLISH_LETTERS + 'åäö'
-const SWEDISH_LETTERS = FINNISH_LETTERS
+const ENGLISH_ALPHABET = 'abcdefghijklmnopqrstuvwxyz'
+const FINNISH_ALPHABET = ENGLISH_ALPHABET + 'åäö'
+const SWEDISH_ALPHABET = FINNISH_ALPHABET
 
-export const LETTERS: { [L in Locale]: string[] } = {
-  fi: toCharArray(FINNISH_LETTERS),
-  en: toCharArray(ENGLISH_LETTERS),
-  se: toCharArray(SWEDISH_LETTERS),
+export const LOCAL_CHARS: { [L in Locale]: string[] } = {
+  fi: toCharArray(FINNISH_ALPHABET),
+  en: toCharArray(ENGLISH_ALPHABET),
+  se: toCharArray(SWEDISH_ALPHABET),
 }
