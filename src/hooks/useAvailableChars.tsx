@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import { LOCAL_CHARS } from '../constants'
 import { toCharArray } from '../utils'
-import { useLocale } from './useLocale'
 import { useGameState } from './useGameState'
+import { useLocale } from './useLocale'
 
 export function useAvailableChars() {
   const { locale } = useLocale()

@@ -2,7 +2,7 @@ import { Stack } from '@mui/material'
 import Button from '@mui/material/Button'
 import { useTranslation } from 'react-i18next'
 import { DataProvider } from '../../hooks/useWordData'
-import { GameStateProvider, useGameState } from '../../hooks/useGameState'
+import { GameProvider, useGameEngine } from '../../hooks/useGameEngine'
 import AvailableChars from '../AvailableChars'
 import NotificationElement from '../NotificationElement'
 import WordleGrid from '../WordleGrid'
@@ -12,12 +12,12 @@ export function WordleGame() {
   return (
     <Stack>
       <DataProvider>
-        <GameStateProvider>
+        <GameProvider>
           <AvailableChars />
           <WordleGrid />
           <NotificationElement />
           <RestartGameButton />
-        </GameStateProvider>
+        </GameProvider>
       </DataProvider>
     </Stack>
   )
@@ -25,7 +25,7 @@ export function WordleGame() {
 
 function RestartGameButton() {
   const { t } = useTranslation()
-  const { restartGame, guesses, currentGuess } = useGameState()
+  const { restartGame, guesses, currentGuess } = useGameEngine()
   return (
     <Button
       variant='contained'
