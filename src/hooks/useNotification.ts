@@ -26,7 +26,11 @@ export function useNotification(): INotification | undefined {
     }
   }
 
-  function composeErrorMessage({ type, guess }: ValidationErrorDto): string {
+  function composeErrorMessage({
+    type,
+    guess,
+    char,
+  }: ValidationErrorDto): string {
     const translationKey = `errors.validation.${type}`
 
     switch (type) {
@@ -36,15 +40,19 @@ export function useNotification(): INotification | undefined {
 
       case ValidationError.ILLEGAL_WORD:
       case ValidationError.ALREADY_GUESSED: {
-        return t(translationKey, { word: guess.toUpperCase() })
+        return t(translationKey, { word: guess?.toUpperCase() })
       }
 
       case ValidationError.TOO_SHORT: {
         return t(translationKey, {
-          word: guess.toUpperCase(),
-          actualLength: guess.length,
+          word: guess?.toUpperCase(),
+          actualLength: guess?.length,
           requiredLength: WORD_LENGTH,
         })
+      }
+
+      case ValidationError.INVALID_CHARACTER: {
+        return t(translationKey, { char: char?.toUpperCase() })
       }
     }
   }

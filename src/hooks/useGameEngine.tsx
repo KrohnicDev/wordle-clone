@@ -21,6 +21,7 @@ import { useWordData } from './useWordData'
 
 export interface GameContext extends Omit<GameState, 'phase'> {
   restartGame(): void
+  addValidationError(error: ValidationErrorDto): void
 }
 
 const GAME_CONTEXT = createContext<GameContext | undefined>(undefined)
@@ -51,16 +52,29 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
     )
   }, [locale, solutions])
 
+  const addError = useCallback((error: ValidationErrorDto) => {
+    clearTimeout(errorTimeout.current)
+    setError(error)
+    errorTimeout.current = setTimeout(() => setError(undefined), 5000)
+  }, [])
+
   // Handle automatic game restarts
   useEffect(() => {
     if (isLoading) {
       console.log(`Loading ${locale.toUpperCase()} solutions...`)
-    } else if (solution.word === '') {
+      return
+    }
+
+    if (solution.word === '') {
       console.log('Starting the first game')
       startNewGame()
-    } else if (solution.locale !== locale) {
+      return
+    }
+
+    if (solution.locale !== locale) {
       console.log('Starting a new game due to language change')
       startNewGame()
+      return
     }
   }, [isLoading, locale, solution, solutions, startNewGame])
 
@@ -84,16 +98,13 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
       }
 
       function handleSubmit() {
+        setCurrentGuess('')
         const validationError = validateGuess(currentGuess)
 
         if (validationError) {
-          setError({ type: validationError, guess: currentGuess })
-          setCurrentGuess('')
-          clearTimeout(errorTimeout.current)
-          errorTimeout.current = setTimeout(() => setError(undefined), 5000)
+          addError({ type: validationError, guess: currentGuess })
         } else {
           setError(undefined)
-          setCurrentGuess('')
           setSubmittedGuesses((previousGuesses) => [
             ...previousGuesses,
             currentGuess,
@@ -108,7 +119,7 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
       document.removeEventListener('keydown', handleKeyPress)
       clearTimeout(errorTimeout.current)
     }
-  }, [currentGuess, submittedGuesses, validateGuess, words])
+  }, [addError, currentGuess, submittedGuesses, validateGuess, words])
 
   const context: GameContext = {
     currentGuess,
@@ -116,6 +127,7 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
     solution: solution.word,
     error,
     restartGame: startNewGame,
+    addValidationError: addError,
   }
 
   return (

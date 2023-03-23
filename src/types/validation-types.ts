@@ -4,11 +4,13 @@ export enum ValidationError {
   ILLEGAL_WORD = 'invalidWord',
   TOO_SHORT = 'tooShort',
   ALREADY_GUESSED = 'alreadyGuessed',
+  INVALID_CHARACTER = 'invalidChar',
 }
 
 export interface ValidationErrorDto {
   type: ValidationError
-  guess: string
+  guess?: string
+  char?: string
 }
 
 export type Validator = [

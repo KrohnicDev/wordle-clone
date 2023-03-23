@@ -15,6 +15,7 @@ export const SWEDISH_TRANSLATIONS: TranslationResource = {
       tooShort:
         'Ordet {{ word }} är för kort ({{ actualLength }}/{{ requiredLength }} bokstäver)',
       alreadyGuessed: 'Ordet {{ word }} har redan gissat',
+      invalidChar: 'TODO',
     },
   },
   notifications: {

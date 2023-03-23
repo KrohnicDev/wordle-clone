@@ -15,6 +15,7 @@ export const FINNISH_TRANSLATIONS: TranslationResource = {
       tooShort:
         'Sana {{ word }} on liian lyhyt ({{ actualLength }}/{{ requiredLength }} merkkiä)',
       alreadyGuessed: 'Sana {{ word }} on jo arvattu',
+      invalidChar: 'Kirjain ei ole sallittu: {{ char }}',
     },
   },
   notifications: {

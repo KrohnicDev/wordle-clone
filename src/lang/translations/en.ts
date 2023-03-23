@@ -13,6 +13,7 @@ export const ENGLISH_TRANSLATIONS = {
       invalidWord: `{{ word }} is not a valid word`,
       tooShort: `Word {{ word }} is too short ({{ actualLength }}/{{ requiredLength }} characters)`,
       alreadyGuessed: `Word {{ word }} has already been guessed`,
+      invalidChar: 'Invalid character: {{ char }}',
     },
   },
   notifications: {
