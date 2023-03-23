@@ -33,12 +33,13 @@ export function useGameEngine() {
 
 export function GameProvider({ children }: PropsWithChildren<unknown>) {
   const { locale } = useLocale()
+  const { words, solutions, isLoading } = useWordData()
+
   const [currentGuess, setCurrentGuess] = useState('')
   const [solution, setSolution] = useState({ locale, word: '' })
   const [submittedGuesses, setSubmittedGuesses] = useState<string[]>([])
-  const { words, solutions, isLoading } = useWordData()
 
-  const [error, setError] = useState<ValidationErrorDto>()
+  const [validationError, setValidationError] = useState<ValidationErrorDto>()
   const errorTimeout = useRef<NodeJS.Timeout>()
 
   const startNewGame = useCallback(() => {
@@ -46,19 +47,19 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
     setSolution({ locale, word: newSolution })
     setSubmittedGuesses([])
     setCurrentGuess('')
-    setError(undefined)
+    setValidationError(undefined)
     console.log(
       `Started a new game (language: ${locale.toUpperCase()}, solution: ${newSolution.toUpperCase()})`
     )
   }, [locale, solutions])
 
-  const addError = useCallback((error: ValidationErrorDto) => {
+  const addValidationError = useCallback((error: ValidationErrorDto) => {
     clearTimeout(errorTimeout.current)
-    setError(error)
-    errorTimeout.current = setTimeout(() => setError(undefined), 5000)
+    setValidationError(error)
+    errorTimeout.current = setTimeout(() => setValidationError(undefined), 5000)
   }, [])
 
-  // Handle automatic game restarts
+  // Handle automatic game restarts (e.g. on first load and on locale change)
   useEffect(() => {
     if (isLoading) {
       console.log(`Loading ${locale.toUpperCase()} solutions...`)
@@ -99,12 +100,12 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
 
       function handleSubmit() {
         setCurrentGuess('')
-        const validationError = validateGuess(currentGuess)
+        const error = validateGuess(currentGuess)
 
-        if (validationError) {
-          addError({ type: validationError, guess: currentGuess })
+        if (error) {
+          addValidationError(error)
         } else {
-          setError(undefined)
+          setValidationError(undefined)
           setSubmittedGuesses((previousGuesses) => [
             ...previousGuesses,
             currentGuess,
@@ -119,15 +120,15 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
       document.removeEventListener('keydown', handleKeyPress)
       clearTimeout(errorTimeout.current)
     }
-  }, [addError, currentGuess, submittedGuesses, validateGuess, words])
+  }, [addValidationError, currentGuess, submittedGuesses, validateGuess, words])
 
   const context: GameContext = {
     currentGuess,
     guesses: submittedGuesses,
     solution: solution.word,
-    error,
+    error: validationError,
     restartGame: startNewGame,
-    addValidationError: addError,
+    addValidationError,
   }
 
   return (

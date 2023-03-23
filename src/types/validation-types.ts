@@ -1,5 +1,5 @@
 // NOTE: Values used in translations
-export type ValidationError =
+export type ValidationErrorType =
   | 'empty-word'
   | 'illegal-word'
   | 'short-word'
@@ -7,12 +7,7 @@ export type ValidationError =
   | 'illegal-char'
 
 export interface ValidationErrorDto {
-  type: ValidationError
+  type: ValidationErrorType
   guess?: string
   char?: string
 }
-
-export type Validator = [
-  error: ValidationError,
-  condition: (guess: string) => boolean
-]

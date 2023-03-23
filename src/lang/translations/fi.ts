@@ -5,8 +5,8 @@ export const FINNISH_TRANSLATIONS: TranslationResource = {
   title: 'Wordle-kopio',
   availableChars: 'Sallitut kirjaimet',
   language: {
-    select: 'Valitse kieli',
     ...UNIVERSAL_TRANSLATIONS.language,
+    select: 'Valitse kieli',
   },
   errors: {
     validation: {

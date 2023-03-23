@@ -1,32 +1,37 @@
 import { useCallback, useMemo } from 'react'
 import { WORD_LENGTH } from '../constants'
-import { ValidationError, Validator } from '../types'
+import { ValidationErrorDto, ValidationErrorType } from '../types'
 import { useWordData } from './useWordData'
 
-export function useGuessValidator(
-  previousGuesses: string[]
-): (guess: string) => ValidationError | undefined {
+type ErrorDefinition = [
+  condition: (guess: string) => boolean,
+  type: ValidationErrorType
+]
+
+type Validator = (guess: string) => ValidationErrorDto | undefined
+
+export function useGuessValidator(previousGuesses: string[]): Validator {
   const { words } = useWordData()
 
-  const validators: Validator[] = useMemo(
+  const errorDefinitions: ErrorDefinition[] = useMemo(
     () => [
-      ['empty-word', (w) => w.length === 0],
-      ['short-word', (w) => w.length < WORD_LENGTH],
-      ['used-word', (w) => previousGuesses.includes(w)],
-      ['illegal-word', (w) => !words.includes(w)],
+      [(w) => w.length === 0, 'empty-word'],
+      [(w) => w.length < WORD_LENGTH, 'short-word'],
+      [(w) => previousGuesses.includes(w), 'used-word'],
+      [(w) => !words.includes(w), 'illegal-word'],
     ],
     [previousGuesses, words]
   )
 
   return useCallback(
     (guess) => {
-      for (const [error, isInvalid] of validators) {
-        if (isInvalid(guess)) {
-          return error
+      for (const [isError, errorType] of errorDefinitions) {
+        if (isError(guess)) {
+          return { type: errorType, guess }
         }
       }
       return undefined
     },
-    [validators]
+    [errorDefinitions]
   )
 }
