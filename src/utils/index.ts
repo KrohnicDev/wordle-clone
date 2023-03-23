@@ -11,7 +11,7 @@ export function selectRandomWord(words: string[]): string {
 }
 
 export function isValidChar(str: string) {
-  return str.length === 1 && str.match(/[a-zäöA-ZÄÖ]/g) !== null
+  return str.length === 1 && str.match(/[a-zåäöA-ZÅÄÖ]/g) !== null
 }
 
 export function valueOrThrow<T>(value: T) {
