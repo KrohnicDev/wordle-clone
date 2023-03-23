@@ -9,11 +9,11 @@ export const ENGLISH_TRANSLATIONS = {
   },
   errors: {
     validation: {
-      emptyWord: 'Word must not be empty',
-      invalidWord: `{{ word }} is not a valid word`,
-      tooShort: `Word {{ word }} is too short ({{ actualLength }}/{{ requiredLength }} characters)`,
-      alreadyGuessed: `Word {{ word }} has already been guessed`,
-      invalidChar: 'Invalid character: {{ char }}',
+      'empty-word': 'Word must not be empty',
+      'illegal-word': `{{ word }} is not a valid word`,
+      'short-word': `Word {{ word }} is too short ({{ actualLength }}/{{ requiredLength }} characters)`,
+      'used-word': `Word {{ word }} has already been guessed`,
+      'illegal-char': 'Invalid character: {{ char }}',
     },
   },
   notifications: {

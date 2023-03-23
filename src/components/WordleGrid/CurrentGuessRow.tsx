@@ -3,7 +3,6 @@ import { WORD_LENGTH } from '../../constants'
 import { useAvailableChars } from '../../hooks/useAvailableChars'
 import { useGameEngine } from '../../hooks/useGameEngine'
 import { useGameState } from '../../hooks/useGameState'
-import { ValidationError } from '../../types'
 import { range } from '../../utils'
 import Cell from '../CharacterCell'
 import Row from '../WordRow'
@@ -33,10 +32,7 @@ function CurrentRowCell(props: CurrentRowCellProps) {
 
   useEffect(() => {
     if (isForbidden) {
-      addValidationError({
-        type: ValidationError.INVALID_CHARACTER,
-        char,
-      })
+      addValidationError({ type: 'illegal-char', char })
     }
   }, [addValidationError, char, isForbidden])
 

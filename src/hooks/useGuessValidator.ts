@@ -7,12 +7,13 @@ export function useGuessValidator(
   previousGuesses: string[]
 ): (guess: string) => ValidationError | undefined {
   const { words } = useWordData()
+
   const validators: Validator[] = useMemo(
     () => [
-      [ValidationError.EMPTY_WORD, (w) => w.length === 0],
-      [ValidationError.TOO_SHORT, (w) => w.length < WORD_LENGTH],
-      [ValidationError.ALREADY_GUESSED, (w) => previousGuesses.includes(w)],
-      [ValidationError.ILLEGAL_WORD, (w) => !words.includes(w)],
+      ['empty-word', (w) => w.length === 0],
+      ['short-word', (w) => w.length < WORD_LENGTH],
+      ['used-word', (w) => previousGuesses.includes(w)],
+      ['illegal-word', (w) => !words.includes(w)],
     ],
     [previousGuesses, words]
   )

@@ -10,12 +10,12 @@ export const FINNISH_TRANSLATIONS: TranslationResource = {
   },
   errors: {
     validation: {
-      emptyWord: 'Sana ei saa olla tyhjä',
-      invalidWord: '{{ word }} ei ole sallittu sana',
-      tooShort:
+      'empty-word': 'Sana ei saa olla tyhjä',
+      'illegal-word': 'Virheellinen sana: {{ word }}',
+      'illegal-char': 'Virheellinen kirjain: {{ char }}',
+      'short-word':
         'Sana {{ word }} on liian lyhyt ({{ actualLength }}/{{ requiredLength }} merkkiä)',
-      alreadyGuessed: 'Sana {{ word }} on jo arvattu',
-      invalidChar: 'Kirjain ei ole sallittu: {{ char }}',
+      'used-word': 'Sana {{ word }} on jo arvattu',
     },
   },
   notifications: {

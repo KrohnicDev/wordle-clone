@@ -1,11 +1,10 @@
 // NOTE: Values used in translations
-export enum ValidationError {
-  EMPTY_WORD = 'emptyWord',
-  ILLEGAL_WORD = 'invalidWord',
-  TOO_SHORT = 'tooShort',
-  ALREADY_GUESSED = 'alreadyGuessed',
-  INVALID_CHARACTER = 'invalidChar',
-}
+export type ValidationError =
+  | 'empty-word'
+  | 'illegal-word'
+  | 'short-word'
+  | 'used-word'
+  | 'illegal-char'
 
 export interface ValidationErrorDto {
   type: ValidationError

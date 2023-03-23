@@ -10,12 +10,12 @@ export const SWEDISH_TRANSLATIONS: TranslationResource = {
   },
   errors: {
     validation: {
-      emptyWord: 'Ordet får inte vara tomt',
-      invalidWord: '{{ word }} är inte ett tillåtet ord',
-      tooShort:
+      'empty-word': 'Ordet får inte vara tomt',
+      'illegal-word': '{{ word }} är inte ett tillåtet ord',
+      'short-word':
         'Ordet {{ word }} är för kort ({{ actualLength }}/{{ requiredLength }} bokstäver)',
-      alreadyGuessed: 'Ordet {{ word }} har redan gissat',
-      invalidChar: 'TODO',
+      'used-word': 'Ordet {{ word }} har redan gissat',
+      'illegal-char': 'TODO',
     },
   },
   notifications: {

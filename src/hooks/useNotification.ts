@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { WORD_LENGTH } from '../constants'
-import { INotification, ValidationError, ValidationErrorDto } from '../types'
+import { INotification, ValidationErrorDto } from '../types'
 import { useGameState } from './useGameState'
 
 export function useNotification(): INotification | undefined {
@@ -34,25 +34,25 @@ export function useNotification(): INotification | undefined {
     const translationKey = `errors.validation.${type}`
 
     switch (type) {
-      case ValidationError.EMPTY_WORD: {
+      case 'empty-word': {
         return t(translationKey)
       }
 
-      case ValidationError.ILLEGAL_WORD:
-      case ValidationError.ALREADY_GUESSED: {
+      case 'illegal-char': {
+        return t(translationKey, { char: char?.toUpperCase() })
+      }
+
+      case 'illegal-word':
+      case 'used-word': {
         return t(translationKey, { word: guess?.toUpperCase() })
       }
 
-      case ValidationError.TOO_SHORT: {
+      case 'short-word': {
         return t(translationKey, {
           word: guess?.toUpperCase(),
           actualLength: guess?.length,
           requiredLength: WORD_LENGTH,
         })
-      }
-
-      case ValidationError.INVALID_CHARACTER: {
-        return t(translationKey, { char: char?.toUpperCase() })
       }
     }
   }
