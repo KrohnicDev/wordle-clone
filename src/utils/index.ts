@@ -20,3 +20,7 @@ export function valueOrThrow<T>(value: T) {
   }
   return value as NonNullable<T>
 }
+
+export function toCharArray(str: string) {
+  return [...str]
+}

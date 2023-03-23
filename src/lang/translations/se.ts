@@ -3,6 +3,7 @@ import { UNIVERSAL_TRANSLATIONS } from './universal'
 
 export const SWEDISH_TRANSLATIONS: TranslationResource = {
   title: 'Wordle Replika',
+  availableChars: 'todo',
   language: {
     select: 'Välj språk',
     ...UNIVERSAL_TRANSLATIONS.language,

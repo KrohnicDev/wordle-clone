@@ -7,11 +7,10 @@
   align-items: center;
   display: flex;
   text-transform: uppercase;
-  
 }
 
 .cell * {
-  font-size: 30px;  
+  font-size: 30px;
 }
 
 .current-guess {
@@ -20,6 +19,10 @@
 
 .incorrect {
   background-color: lightgray;
+}
+
+.forbidden {
+  background-color: lightcoral;
 }
 
 .partially-correct {

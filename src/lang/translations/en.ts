@@ -2,6 +2,7 @@ import { UNIVERSAL_TRANSLATIONS } from './universal'
 
 export const ENGLISH_TRANSLATIONS = {
   title: 'Wordle Clone',
+  availableChars: 'Available characters',
   language: {
     select: 'Select language',
     ...UNIVERSAL_TRANSLATIONS.language,

@@ -3,6 +3,7 @@ import { UNIVERSAL_TRANSLATIONS } from './universal'
 
 export const FINNISH_TRANSLATIONS: TranslationResource = {
   title: 'Wordle-kopio',
+  availableChars: 'Sallitut kirjaimet',
   language: {
     select: 'Valitse kieli',
     ...UNIVERSAL_TRANSLATIONS.language,

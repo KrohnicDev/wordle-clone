@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { WORD_LENGTH } from '../constants'
 import { INotification, ValidationError, ValidationErrorDto } from '../types'
-import { useGameState } from './useWordleGame'
+import { useGameState } from './useGameState'
 
 export function useNotification(): INotification | undefined {
   const { t } = useTranslation()

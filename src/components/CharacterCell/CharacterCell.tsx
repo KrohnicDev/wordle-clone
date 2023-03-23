@@ -3,7 +3,7 @@ import './CharacterCell.css'
 interface Props {
   guessType: 'current-guess' | 'submitted' | 'empty'
   char?: string
-  status?: 'correct' | 'partially-correct' | 'incorrect'
+  status?: 'correct' | 'partially-correct' | 'incorrect' | 'forbidden'
   isCurrentCell?: boolean
 }
 

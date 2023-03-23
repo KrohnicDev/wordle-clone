@@ -1,4 +1,4 @@
-import { useGameState } from '../../hooks/useWordleGame'
+import { useGameState } from '../../hooks/useGameState'
 import Cell from '../CharacterCell'
 import Row from '../WordRow'
 

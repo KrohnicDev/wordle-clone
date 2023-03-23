@@ -124,10 +124,6 @@ export function GameStateProvider({ children }: PropsWithChildren<unknown>) {
     restartGame: startNewGame,
   }
 
-  if (isLoading) {
-    return null
-  }
-
   return (
     <GAME_CONTEXT.Provider value={context}>{children}</GAME_CONTEXT.Provider>
   )
