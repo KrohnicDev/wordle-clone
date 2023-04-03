@@ -5,8 +5,8 @@ export const SWEDISH_TRANSLATIONS: TranslationResource = {
   title: 'Wordle Replika',
   availableChars: 'todo',
   language: {
-    select: 'Välj språk',
     ...UNIVERSAL_TRANSLATIONS.language,
+    select: 'Välj språk',
   },
   errors: {
     validation: {

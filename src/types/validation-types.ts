@@ -1,13 +1,17 @@
 // NOTE: Values used in translations
-export type ValidationErrorType =
-  | 'empty-word'
-  | 'illegal-word'
-  | 'short-word'
-  | 'used-word'
-  | 'illegal-char'
+export const WORD_ERRORS = [
+  'empty-word',
+  'illegal-word',
+  'short-word',
+  'used-word',
+] as const
 
-export interface ValidationErrorDto {
-  type: ValidationErrorType
-  guess?: string
-  char?: string
-}
+export const CHAR_ERRORS = ['illegal-char'] as const
+
+export type WordErrorType = (typeof WORD_ERRORS)[number]
+
+export type CharErrorType = (typeof CHAR_ERRORS)[number]
+
+export type ValidationErrorDto =
+  | { type: CharErrorType; char: string }
+  | { type: WordErrorType; guess: string }

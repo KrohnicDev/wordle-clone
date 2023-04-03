@@ -26,31 +26,27 @@ export function useNotification(): INotification | undefined {
     }
   }
 
-  function composeErrorMessage({
-    type,
-    guess,
-    char,
-  }: ValidationErrorDto): string {
-    const translationKey = `errors.validation.${type}`
+  function composeErrorMessage(error: ValidationErrorDto): string {
+    const translationKey = `errors.validation.${error.type}`
 
-    switch (type) {
+    switch (error.type) {
       case 'empty-word': {
         return t(translationKey)
       }
 
       case 'illegal-char': {
-        return t(translationKey, { char: char?.toUpperCase() })
+        return t(translationKey, { char: error.char.toUpperCase() })
       }
 
       case 'illegal-word':
       case 'used-word': {
-        return t(translationKey, { word: guess?.toUpperCase() })
+        return t(translationKey, { word: error.guess.toUpperCase() })
       }
 
       case 'short-word': {
         return t(translationKey, {
-          word: guess?.toUpperCase(),
-          actualLength: guess?.length,
+          word: error.guess.toUpperCase(),
+          actualLength: error.guess.length,
           requiredLength: WORD_LENGTH,
         })
       }
