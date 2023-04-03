@@ -5,14 +5,12 @@ import { useWordData } from './useWordData'
 
 type GuessValidator = (guess: string) => ValidationErrorDto | undefined
 
-type WordErrorDefinitions = {
-  [T in WordErrorType]: (guess: string) => boolean
-}
-
 export function useGuessValidator(previousGuesses: string[]): GuessValidator {
   const { words } = useWordData()
 
-  const errorDefinitions: WordErrorDefinitions = useMemo(
+  const errorDefinitions: {
+    [T in WordErrorType]: (guess: string) => boolean
+  } = useMemo(
     () => ({
       'empty-word': (w) => w.length === 0,
       'short-word': (w) => w.length < WORD_LENGTH,
