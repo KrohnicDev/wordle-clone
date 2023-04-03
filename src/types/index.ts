@@ -11,6 +11,7 @@ export interface GameState {
   currentGuess: string
   guesses: string[]
   phase: GamePhase
+  availableChars: string[]
   error?: ValidationErrorDto
 }
 

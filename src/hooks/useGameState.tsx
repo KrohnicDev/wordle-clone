@@ -5,7 +5,7 @@ import { useGameEngine } from './useGameEngine'
 
 /** Provides access to global game state */
 export function useGameState(): GameState {
-  const { currentGuess, guesses, solution, error } = useGameEngine()
+  const { guesses, solution, ...rest } = useGameEngine()
 
   const phase: GamePhase = useMemo(() => {
     if (guesses.includes(solution)) {
@@ -18,10 +18,9 @@ export function useGameState(): GameState {
   }, [guesses, solution])
 
   return {
-    currentGuess,
     guesses,
-    solution,
     phase,
-    error,
+    solution,
+    ...rest,
   }
 }

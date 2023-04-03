@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import { LOCAL_CHARS } from '../../constants'
-import { useAvailableChars } from '../../hooks/useAvailableChars'
+import { useGameState } from '../../hooks/useGameState'
 import { useLocale } from '../../hooks/useLocale'
 import './AvailableChars.css'
 
 export function AvailableChars() {
-  const availableChars = useAvailableChars()
+  const { availableChars } = useGameState()
   const { locale } = useLocale()
   const { t } = useTranslation()
   const chars = LOCAL_CHARS[locale]

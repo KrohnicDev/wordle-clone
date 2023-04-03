@@ -4,20 +4,25 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
-import { WORD_LENGTH } from '../constants'
+import { LOCAL_CHARS, WORD_LENGTH } from '../constants'
 import { GameState, ValidationErrorDto } from '../types'
-import { selectRandomWord, valueOrThrow, withoutLastChar } from '../utils'
+import {
+  selectRandomWord,
+  toCharArray,
+  valueOrThrow,
+  withoutLastChar,
+} from '../utils'
 import { useGuessValidator } from './useGuessValidator'
-import { useKeyboardInput } from './useKeyboardInput'
+import { useKeyboardEvents } from './useKeyboardEvents'
 import { useLocale } from './useLocale'
 import { useWordData } from './useWordData'
 
 export interface GameContext extends Omit<GameState, 'phase'> {
   restartGame(): void
-  addValidationError(error: ValidationErrorDto): void
 }
 
 const GAME_CONTEXT = createContext<GameContext | undefined>(undefined)
@@ -35,8 +40,7 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
   const [solution, setSolution] = useState({ locale, word: '' })
   const [submittedGuesses, setSubmittedGuesses] = useState<string[]>([])
 
-  const [validationError, setValidationError] = useState<ValidationErrorDto>()
-  const errorTimeout = useRef<NodeJS.Timeout>()
+  const [validationError, setValidationError] = useValidationError()
 
   const startNewGame = useCallback(() => {
     const newSolution = selectRandomWord(solutions)
@@ -47,35 +51,39 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
     console.log(
       `Started a new game (language: ${locale.toUpperCase()}, solution: ${newSolution.toUpperCase()})`
     )
-  }, [locale, solutions])
+  }, [locale, setValidationError, solutions])
 
-  const addValidationError = useCallback((error: ValidationErrorDto) => {
-    clearTimeout(errorTimeout.current)
-    setValidationError(error)
-    errorTimeout.current = setTimeout(() => setValidationError(undefined), 5000)
-  }, [])
+  const availableChars = useMemo(() => {
+    const chars = LOCAL_CHARS[locale]
+    const incorrectChars = submittedGuesses
+      .flatMap(toCharArray)
+      .filter((char) => !solution.word.includes(char))
+    return chars.filter((char) => !incorrectChars.includes(char))
+  }, [submittedGuesses, locale, solution])
 
   const validateGuess = useGuessValidator(submittedGuesses)
 
-  useKeyboardInput({
+  useKeyboardEvents({
     onCharInput: (char) => {
       if (currentGuess.length >= WORD_LENGTH) {
         console.log(`Guess ${currentGuess} is at max length (${WORD_LENGTH})`)
-      } else {
-        setCurrentGuess((guess) => guess + char.toLowerCase())
+        return
       }
+
+      if (!availableChars.includes(char)) {
+        // Allow character input but show warning
+        setValidationError({ type: 'illegal-char', char })
+      }
+
+      setCurrentGuess((guess) => guess + char.toLowerCase())
     },
-
     onBackspace: () => setCurrentGuess(withoutLastChar),
-
     onSubmit: () => {
-      setCurrentGuess('')
       const error = validateGuess(currentGuess)
+      setValidationError(error)
+      setCurrentGuess('')
 
-      if (error) {
-        addValidationError(error)
-      } else {
-        setValidationError(undefined)
+      if (error === undefined) {
         setSubmittedGuesses((previousGuesses) => [
           ...previousGuesses,
           currentGuess,
@@ -109,11 +117,28 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
     guesses: submittedGuesses,
     solution: solution.word,
     error: validationError,
+    availableChars,
     restartGame: startNewGame,
-    addValidationError,
   }
 
   return (
     <GAME_CONTEXT.Provider value={context}>{children}</GAME_CONTEXT.Provider>
   )
+}
+
+/** Handles automatic error clearing after delay */
+function useValidationError() {
+  const [error, _setError] = useState<ValidationErrorDto>()
+  const timeout = useRef<NodeJS.Timeout>()
+
+  const setError = useCallback((error: ValidationErrorDto | undefined) => {
+    _setError(error)
+
+    if (error) {
+      clearTimeout(timeout.current)
+      timeout.current = setTimeout(() => setError(undefined), 5000)
+    }
+  }, [])
+
+  return [error, setError] as const
 }

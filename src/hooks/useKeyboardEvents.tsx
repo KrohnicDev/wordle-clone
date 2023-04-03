@@ -1,21 +1,19 @@
 import { useEffect, useRef } from 'react'
 import { isValidChar } from '../utils'
 
-type KeyboardActions = {
+/** Handles keyboard press logic */
+export function useKeyboardEvents(handlers: {
   onSubmit: () => void
   onBackspace: () => void
   onCharInput: (char: string) => void
-}
+}) {
+  const onSubmit = useRef(handlers.onSubmit)
+  const onBackspace = useRef(handlers.onBackspace)
+  const onCharInput = useRef(handlers.onCharInput)
 
-/** Handles keyboard press logic */
-export function useKeyboardInput(actions: KeyboardActions) {
-  const onSubmit = useRef(actions.onSubmit)
-  const onBackspace = useRef(actions.onBackspace)
-  const onCharInput = useRef(actions.onCharInput)
-
-  onSubmit.current = actions.onSubmit
-  onBackspace.current = actions.onBackspace
-  onCharInput.current = actions.onCharInput
+  onSubmit.current = handlers.onSubmit
+  onBackspace.current = handlers.onBackspace
+  onCharInput.current = handlers.onCharInput
 
   useEffect(() => {
     function handleKeyPress(event: KeyboardEvent): void {

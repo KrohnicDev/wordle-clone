@@ -1,7 +1,4 @@
-import { useEffect } from 'react'
 import { WORD_LENGTH } from '../../constants'
-import { useAvailableChars } from '../../hooks/useAvailableChars'
-import { useGameEngine } from '../../hooks/useGameEngine'
 import { useGameState } from '../../hooks/useGameState'
 import { range } from '../../utils'
 import Cell from '../CharacterCell'
@@ -26,15 +23,8 @@ type CurrentRowCellProps = {
 
 function CurrentRowCell(props: CurrentRowCellProps) {
   const { char, isCurrentCell } = props
-  const { addValidationError } = useGameEngine()
-  const availableChars = useAvailableChars()
+  const { availableChars } = useGameState()
   const isForbidden = char.trim() !== '' && !availableChars.includes(char)
-
-  useEffect(() => {
-    if (isForbidden) {
-      addValidationError({ type: 'illegal-char', char })
-    }
-  }, [addValidationError, char, isForbidden])
 
   return (
     <Cell
