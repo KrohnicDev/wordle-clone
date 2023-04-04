@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react'
 import { LOCAL_CHARS, WORD_LENGTH } from '../constants'
-import { GameState, ValidationErrorDto } from '../types'
+import { GameState, Locale, ValidationErrorDto } from '../types'
 import {
   selectRandomWord,
   toCharArray,
@@ -18,10 +18,10 @@ import {
 } from '../utils'
 import { useGuessValidator } from './useGuessValidator'
 import { useKeyboardEvents } from './useKeyboardEvents'
-import { useLocale } from './useLocale'
+import { useCurrentLocale } from './useLocale'
 import { useWordData } from './useWordData'
 
-export interface GameContext extends Omit<GameState, 'phase'> {
+export type GameContext = Omit<GameState, 'phase'> & {
   restartGame(): void
 }
 
@@ -32,13 +32,15 @@ export function useGameEngine() {
   return valueOrThrow(useContext(GAME_CONTEXT))
 }
 
+type LocalizedWord = { locale: Locale; word: string }
+
 export function GameProvider({ children }: PropsWithChildren<unknown>) {
-  const { locale } = useLocale()
-  const { solutions, isLoading } = useWordData()
+  const { solutions } = useWordData()
+  const locale = useCurrentLocale()
 
   const [currentGuess, setCurrentGuess] = useState('')
-  const [solution, setSolution] = useState({ locale, word: '' })
   const [submittedGuesses, setSubmittedGuesses] = useState<string[]>([])
+  const [solution, setSolution] = useState<LocalizedWord>({ locale, word: '' })
 
   const [validationError, setValidationError] = useValidationError()
 
@@ -53,13 +55,7 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
     )
   }, [locale, setValidationError, solutions])
 
-  const availableChars = useMemo(() => {
-    const chars = LOCAL_CHARS[locale]
-    const incorrectChars = submittedGuesses
-      .flatMap(toCharArray)
-      .filter((char) => !solution.word.includes(char))
-    return chars.filter((char) => !incorrectChars.includes(char))
-  }, [submittedGuesses, locale, solution])
+  useAutomaticGameRestarts(solution, startNewGame)
 
   const validateGuess = useGuessValidator(submittedGuesses)
 
@@ -70,47 +66,33 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
         return
       }
 
-      if (!availableChars.includes(char)) {
-        // Allow character input but show warning
-        setValidationError({ type: 'illegal-char', char })
-      }
-
       setCurrentGuess((guess) => guess + char.toLowerCase())
     },
     onBackspace: () => setCurrentGuess(withoutLastChar),
     onSubmit: () => {
       const error = validateGuess(currentGuess)
-      setValidationError(error)
-      setCurrentGuess('')
 
-      if (error === undefined) {
-        setSubmittedGuesses((previousGuesses) => [
-          ...previousGuesses,
-          currentGuess,
-        ])
+      if (error) {
+        setValidationError(error)
+        return
       }
+
+      setValidationError(undefined)
+      setCurrentGuess('')
+      setSubmittedGuesses((previousGuesses) => [
+        ...previousGuesses,
+        currentGuess,
+      ])
     },
   })
 
-  // Handle automatic game restarts (e.g. on first load and on locale change)
-  useEffect(() => {
-    if (isLoading) {
-      console.log(`Loading ${locale.toUpperCase()} solutions...`)
-      return
-    }
-
-    if (solution.word === '') {
-      console.log('Starting the first game')
-      startNewGame()
-      return
-    }
-
-    if (solution.locale !== locale) {
-      console.log('Starting a new game due to language change')
-      startNewGame()
-      return
-    }
-  }, [isLoading, locale, solution, solutions, startNewGame])
+  const availableChars = useMemo(() => {
+    const chars = LOCAL_CHARS[locale]
+    const incorrectChars = submittedGuesses
+      .flatMap(toCharArray)
+      .filter((char) => !solution.word.includes(char))
+    return chars.filter((char) => !incorrectChars.includes(char))
+  }, [submittedGuesses, locale, solution])
 
   const context: GameContext = {
     currentGuess,
@@ -141,4 +123,32 @@ function useValidationError() {
   }, [])
 
   return [error, setError] as const
+}
+
+/** Handles automatic game restarts (e.g. on first load and on locale change) */
+function useAutomaticGameRestarts(
+  solution: LocalizedWord,
+  startNewGame: () => void
+) {
+  const { isLoading } = useWordData()
+  const locale = useCurrentLocale()
+
+  useEffect(() => {
+    if (isLoading) {
+      console.log(`Loading ${locale.toUpperCase()} solutions...`)
+      return
+    }
+
+    if (solution.word === '') {
+      console.log('Starting the first game')
+      startNewGame()
+      return
+    }
+
+    if (solution.locale !== locale) {
+      console.log('Starting a new game due to language change')
+      startNewGame()
+      return
+    }
+  }, [isLoading, locale, solution, startNewGame])
 }

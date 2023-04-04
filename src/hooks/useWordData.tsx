@@ -2,7 +2,7 @@ import axios from 'axios'
 import { createContext, PropsWithChildren, useContext } from 'react'
 import { useQuery } from 'react-query'
 import { valueOrThrow } from '../utils'
-import { useLocale } from './useLocale'
+import { useSettings } from './useSettings'
 
 interface WordData {
   words: string[]
@@ -33,10 +33,10 @@ export function DataProvider({ children }: PropsWithChildren<unknown>) {
 }
 
 function useWordsQuery(prefix: 'words' | 'solutions') {
-  const { locale } = useLocale()
+  const { locale } = useSettings()
   return useQuery({
     queryKey: `${prefix}-${locale}`,
-    queryFn: () => fetchWordList(`${prefix}_${locale}.json`),
+    queryFn: () => fetchWordList(`${prefix}_${locale.value}.json`),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     retry: false,
