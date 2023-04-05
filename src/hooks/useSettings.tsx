@@ -4,7 +4,7 @@ import { DEFAULT_LOCALE } from '../lang/i18n'
 import { Locale } from '../types'
 import { OpenSetting, BooleanSetting } from '../types/settings-types'
 import { valueOrThrow } from '../utils'
-import { useLocalStorage } from './useLocalStorage'
+import { useLocalStorage, useSessionStorage } from './useStorage'
 
 type SettingsContext = {
   locale: OpenSetting<Locale>
@@ -23,10 +23,10 @@ export function SettingsProvider({ children }: PropsWithChildren<unknown>) {
   const { i18n } = useTranslation()
 
   const [shouldCheckIncorrectChars, setShouldCheckIncorrectChars] =
-    useLocalStorage('checkIncorrectChars', true)
+    useSessionStorage('checkIncorrectChars', true)
 
   const [shouldCheckIncorrectWords, setShouldCheckIncorrectWords] =
-    useLocalStorage('canSubmitIncorrectWords', false)
+    useSessionStorage('canSubmitIncorrectWords', false)
 
   useEffect(() => {
     i18n.changeLanguage(locale)
@@ -41,15 +41,19 @@ export function SettingsProvider({ children }: PropsWithChildren<unknown>) {
         },
         checkIncorrectChars: {
           isEnabled: shouldCheckIncorrectChars,
-          toggle: () => setShouldCheckIncorrectChars((v) => !v),
+          toggle: () => setShouldCheckIncorrectChars(inverted),
         },
         checkIncorrectWords: {
           isEnabled: shouldCheckIncorrectWords,
-          toggle: () => setShouldCheckIncorrectWords((v) => !v),
+          toggle: () => setShouldCheckIncorrectWords(inverted),
         },
       }}
     >
       {children}
     </SETTINGS_CONTEXT.Provider>
   )
+}
+
+function inverted(value: boolean) {
+  return !value
 }

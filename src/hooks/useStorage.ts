@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react'
 
 export function useLocalStorage<T>(key: string, initialValue: T) {
+  return useStorage(key, initialValue, localStorage)
+}
+
+export function useSessionStorage<T>(key: string, initialValue: T) {
+  return useStorage(key, initialValue, sessionStorage)
+}
+
+function useStorage<T>(key: string, initialValue: T, storage: Storage) {
   const persistedValue = localStorage.getItem(key)
 
   const [value, setValue] = useState(() =>
@@ -8,8 +16,8 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   )
 
   useEffect(
-    () => localStorage.setItem(key, JSON.stringify(value)),
-    [key, value]
+    () => storage.setItem(key, JSON.stringify(value)),
+    [key, storage, value]
   )
 
   return [value, setValue] as const

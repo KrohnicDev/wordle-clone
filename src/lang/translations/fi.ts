@@ -4,9 +4,15 @@ import { UNIVERSAL_TRANSLATIONS } from './universal'
 export const FINNISH_TRANSLATIONS: TranslationResource = {
   title: 'Wordle-kopio',
   availableChars: 'Sallitut kirjaimet',
-  language: {
-    ...UNIVERSAL_TRANSLATIONS.language,
-    select: 'Valitse kieli',
+  settings: {
+    language: {
+      ...UNIVERSAL_TRANSLATIONS.language,
+      select: 'Valitse kieli',
+    },
+    validation: {
+      allowInvalidChars: 'Salli virheelliset kirjaimet',
+      allowInvalidWords: 'Salli virheelliset sanat',
+    },
   },
   errors: {
     validation: {

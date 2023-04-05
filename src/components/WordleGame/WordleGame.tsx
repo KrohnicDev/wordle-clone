@@ -7,13 +7,15 @@ import AvailableChars from '../AvailableChars'
 import NotificationElement from '../NotificationElement'
 import WordleGrid from '../WordleGrid'
 import './WordleGame.css'
+import { useSettings } from '../../hooks/useSettings'
 
 export function WordleGame() {
+  const { checkIncorrectChars } = useSettings()
   return (
     <Stack>
       <DataProvider>
         <GameProvider>
-          <AvailableChars />
+          {checkIncorrectChars.isEnabled && <AvailableChars />}
           <WordleGrid />
           <NotificationElement />
           <RestartGameButton />

@@ -11,11 +11,13 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSettings } from '../../hooks/useSettings'
 import { Locale, isLocale, LOCALES, BooleanSetting } from '../../types'
+import './Settings.css'
 
 export function Settings() {
   const [anchorEl, setAnchorEl] = useState<HTMLElement>()
   const isOpen = Boolean(anchorEl)
   const { checkIncorrectChars, checkIncorrectWords } = useSettings()
+  const { t } = useTranslation()
 
   return (
     <div>
@@ -30,15 +32,15 @@ export function Settings() {
         <LocaleSelect />
 
         <SettingsSwitch
-          label='Salli virheelliset kirjaimet'
-          setting={checkIncorrectChars}
           inverted
+          label={t('settings.validation.allowInvalidChars')}
+          setting={checkIncorrectChars}
         />
 
         <SettingsSwitch
-          label='Salli virheelliset sanat'
-          setting={checkIncorrectWords}
           inverted
+          label={t('settings.validation.allowInvalidWords')}
+          setting={checkIncorrectWords}
         />
       </Menu>
     </div>
@@ -48,6 +50,7 @@ export function Settings() {
 function LocaleSelect() {
   const { locale } = useSettings()
   const { t } = useTranslation()
+  const label = t('settings.language.select')
 
   function handleChange(e: SelectChangeEvent<Locale>) {
     const value = e.target.value
@@ -60,15 +63,16 @@ function LocaleSelect() {
 
   return (
     <MenuItem>
-      {t('language.select')}
+      {label}
       <Select
-        label={t('language.select')}
+        label={label}
         onChange={handleChange}
         value={locale.value}
+        className='language-select'
       >
         {LOCALES.map((it) => (
           <MenuItem value={it} key={it}>
-            {t(`language.${it}`)}
+            {t(`settings.language.${it}`)}
           </MenuItem>
         ))}
       </Select>

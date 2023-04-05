@@ -3,9 +3,15 @@ import { UNIVERSAL_TRANSLATIONS } from './universal'
 export const ENGLISH_TRANSLATIONS = {
   title: 'Wordle Clone',
   availableChars: 'Available characters',
-  language: {
-    ...UNIVERSAL_TRANSLATIONS.language,
-    select: 'Select language',
+  settings: {
+    language: {
+      ...UNIVERSAL_TRANSLATIONS.language,
+      select: 'Select language',
+    },
+    validation: {
+      allowInvalidChars: 'Allow invalid chars',
+      allowInvalidWords: 'Allow invalid words',
+    },
   },
   errors: {
     validation: {

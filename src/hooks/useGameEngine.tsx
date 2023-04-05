@@ -19,8 +19,7 @@ import {
 import { useGuessValidator } from './useGuessValidator'
 import { useKeyboardEvents } from './useKeyboardEvents'
 import { useCurrentLocale } from './useLocale'
-import { useLocalStorage } from './useLocalStorage'
-import { useSettings } from './useSettings'
+import { useSessionStorage } from './useStorage'
 import { useWordData } from './useWordData'
 
 export type GameContext = Omit<GameState, 'phase'> & {
@@ -39,14 +38,13 @@ type LocalizedWord = { locale: Locale; word: string }
 export function GameProvider({ children }: PropsWithChildren<unknown>) {
   const { solutions } = useWordData()
   const locale = useCurrentLocale()
-  const { checkIncorrectChars } = useSettings()
 
   const [currentGuess, setCurrentGuess] = useState('')
-  const [submittedGuesses, setSubmittedGuesses] = useLocalStorage<string[]>(
+  const [submittedGuesses, setSubmittedGuesses] = useSessionStorage<string[]>(
     'submittedGuesses',
     []
   )
-  const [solution, setSolution] = useLocalStorage<LocalizedWord>('solution', {
+  const [solution, setSolution] = useSessionStorage<LocalizedWord>('solution', {
     locale,
     word: '',
   })

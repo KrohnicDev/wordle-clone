@@ -3,10 +3,16 @@ import { UNIVERSAL_TRANSLATIONS } from './universal'
 
 export const SWEDISH_TRANSLATIONS: TranslationResource = {
   title: 'Wordle Replika',
-  availableChars: 'todo',
-  language: {
-    ...UNIVERSAL_TRANSLATIONS.language,
-    select: 'Välj språk',
+  availableChars: 'TODO',
+  settings: {
+    language: {
+      ...UNIVERSAL_TRANSLATIONS.language,
+      select: 'Välj språk',
+    },
+    validation: {
+      allowInvalidChars: 'TODO',
+      allowInvalidWords: 'TODO',
+    },
   },
   errors: {
     validation: {
