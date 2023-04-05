@@ -11,6 +11,7 @@ export function CharacterCell(props: Props): JSX.Element {
   const { char, guessType, status, isCurrentCell } = props
   const cursorElement = <span className='blink'>_</span>
   const charElement = <span>{char}</span>
+
   return (
     <div
       className={`cell ${guessType} ${status ?? ''}`}

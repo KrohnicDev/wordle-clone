@@ -92,10 +92,6 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
         return
       }
 
-      if (checkIncorrectChars.isEnabled && !availableChars.includes(char)) {
-        setValidationError({ type: 'illegal-char', char })
-      }
-
       setCurrentGuess((guess) => guess + char.toLowerCase())
     },
     onBackspace: () => setCurrentGuess(withoutLastChar),

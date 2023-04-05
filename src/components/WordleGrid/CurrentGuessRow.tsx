@@ -1,5 +1,6 @@
 import { WORD_LENGTH } from '../../constants'
 import { useGameState } from '../../hooks/useGameState'
+import { useSettings } from '../../hooks/useSettings'
 import { range } from '../../utils'
 import Cell from '../CharacterCell'
 import Row from '../WordRow'
@@ -22,16 +23,19 @@ type CurrentRowCellProps = {
 }
 
 function CurrentRowCell(props: CurrentRowCellProps) {
-  const { char, isCurrentCell } = props
+  const { char } = props
   const { availableChars } = useGameState()
-  const isForbidden = char.trim() !== '' && !availableChars.includes(char)
+  const { checkIncorrectChars } = useSettings()
+  const isForbidden =
+    checkIncorrectChars.isEnabled &&
+    char.trim() !== '' &&
+    !availableChars.includes(char)
 
   return (
     <Cell
       guessType={'current-guess'}
-      char={char}
-      isCurrentCell={isCurrentCell}
       status={isForbidden ? 'forbidden' : undefined}
+      {...props}
     />
   )
 }
