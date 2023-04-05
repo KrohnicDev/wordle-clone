@@ -26,7 +26,7 @@ export function SettingsProvider({ children }: PropsWithChildren<unknown>) {
     useSessionStorage('checkIncorrectChars', true)
 
   const [shouldCheckIncorrectWords, setShouldCheckIncorrectWords] =
-    useSessionStorage('canSubmitIncorrectWords', false)
+    useSessionStorage('canSubmitIncorrectWords', true)
 
   useEffect(() => {
     i18n.changeLanguage(locale)

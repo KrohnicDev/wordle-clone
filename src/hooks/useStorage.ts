@@ -9,7 +9,7 @@ export function useSessionStorage<T>(key: string, initialValue: T) {
 }
 
 function useStorage<T>(key: string, initialValue: T, storage: Storage) {
-  const persistedValue = localStorage.getItem(key)
+  const persistedValue = storage.getItem(key)
 
   const [value, setValue] = useState(() =>
     persistedValue ? (JSON.parse(persistedValue) as T) : initialValue
