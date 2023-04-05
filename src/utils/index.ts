@@ -24,3 +24,13 @@ export function valueOrThrow<T>(value: T) {
 export function toCharArray(str: string) {
   return [...str]
 }
+
+export function match<T>(...matchers: [predicate: () => boolean, value: T][]) {
+  for (const [predicate, value] of matchers) {
+    if (predicate()) {
+      return value
+    }
+  }
+
+  return undefined
+}

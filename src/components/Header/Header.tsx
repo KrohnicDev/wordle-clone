@@ -1,6 +1,6 @@
 import { AppBar, Toolbar, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import Settings from '../Settings'
+import SettingsMenu from '../SettingsMenu'
 
 export function Header() {
   const { t } = useTranslation()
@@ -10,7 +10,7 @@ export function Header() {
         <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
           {t('title')}
         </Typography>
-        <Settings />
+        <SettingsMenu />
       </Toolbar>
     </AppBar>
   )
