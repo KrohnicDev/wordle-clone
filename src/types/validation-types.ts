@@ -12,6 +12,8 @@ export type WordErrorType = (typeof WORD_ERRORS)[number]
 
 export type CharErrorType = (typeof CHAR_ERRORS)[number]
 
+export type ValidationErrorType = WordErrorType | CharErrorType
+
 export type ValidationErrorDto =
   | { type: CharErrorType; char: string }
   | { type: WordErrorType; guess: string }

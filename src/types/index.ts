@@ -2,6 +2,7 @@ import { ValidationErrorDto } from './validation-types'
 
 export * from './locale-types'
 export * from './validation-types'
+export * from './settings-types'
 
 // NOTE: Values used in translations
 export type GamePhase = 'in-progress' | 'lose' | 'win'

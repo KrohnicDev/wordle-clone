@@ -10,13 +10,12 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSettings } from '../../hooks/useSettings'
-import { Locale, isLocale, LOCALES } from '../../types'
+import { Locale, isLocale, LOCALES, BooleanSetting } from '../../types'
 
 export function Settings() {
   const [anchorEl, setAnchorEl] = useState<HTMLElement>()
   const isOpen = Boolean(anchorEl)
-  const { t } = useTranslation()
-  const { allowIncorrectChars, allowIncorrectWords } = useSettings()
+  const { checkIncorrectChars, checkIncorrectWords } = useSettings()
 
   return (
     <div>
@@ -28,24 +27,19 @@ export function Settings() {
         onClose={() => setAnchorEl(undefined)}
         anchorEl={anchorEl}
       >
-        <MenuItem>
-          {t('language.select')}
-          <LocaleSelect />
-        </MenuItem>
-        <MenuItem>
-          Salli virheelliset kirjaimet
-          <Switch
-            checked={allowIncorrectChars.value}
-            onClick={allowIncorrectChars.toggle}
-          />
-        </MenuItem>
-        <MenuItem>
-          Salli virheelliset sanat
-          <Switch
-            checked={allowIncorrectWords.value}
-            onClick={allowIncorrectWords.toggle}
-          />
-        </MenuItem>
+        <LocaleSelect />
+
+        <SettingsSwitch
+          label='Salli virheelliset kirjaimet'
+          setting={checkIncorrectChars}
+          inverted
+        />
+
+        <SettingsSwitch
+          label='Salli virheelliset sanat'
+          setting={checkIncorrectWords}
+          inverted
+        />
       </Menu>
     </div>
   )
@@ -65,16 +59,39 @@ function LocaleSelect() {
   }
 
   return (
-    <Select
-      label={t('language.select')}
-      onChange={handleChange}
-      value={locale.value}
-    >
-      {LOCALES.map((it) => (
-        <MenuItem value={it} key={it}>
-          {t(`language.${it}`)}
-        </MenuItem>
-      ))}
-    </Select>
+    <MenuItem>
+      {t('language.select')}
+      <Select
+        label={t('language.select')}
+        onChange={handleChange}
+        value={locale.value}
+      >
+        {LOCALES.map((it) => (
+          <MenuItem value={it} key={it}>
+            {t(`language.${it}`)}
+          </MenuItem>
+        ))}
+      </Select>
+    </MenuItem>
+  )
+}
+
+function SettingsSwitch({
+  label,
+  setting,
+  inverted,
+}: {
+  label: string
+  setting: BooleanSetting
+  inverted?: boolean
+}) {
+  return (
+    <MenuItem>
+      {label}
+      <Switch
+        checked={inverted ? !setting.isEnabled : setting.isEnabled}
+        onClick={setting.toggle}
+      />
+    </MenuItem>
   )
 }

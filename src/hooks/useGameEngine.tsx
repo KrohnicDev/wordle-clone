@@ -19,6 +19,8 @@ import {
 import { useGuessValidator } from './useGuessValidator'
 import { useKeyboardEvents } from './useKeyboardEvents'
 import { useCurrentLocale } from './useLocale'
+import { useLocalStorage } from './useLocalStorage'
+import { useSettings } from './useSettings'
 import { useWordData } from './useWordData'
 
 export type GameContext = Omit<GameState, 'phase'> & {
@@ -37,11 +39,17 @@ type LocalizedWord = { locale: Locale; word: string }
 export function GameProvider({ children }: PropsWithChildren<unknown>) {
   const { solutions } = useWordData()
   const locale = useCurrentLocale()
+  const { checkIncorrectChars } = useSettings()
 
   const [currentGuess, setCurrentGuess] = useState('')
-  const [submittedGuesses, setSubmittedGuesses] = useState<string[]>([])
-  const [solution, setSolution] = useState<LocalizedWord>({ locale, word: '' })
-
+  const [submittedGuesses, setSubmittedGuesses] = useLocalStorage<string[]>(
+    'submittedGuesses',
+    []
+  )
+  const [solution, setSolution] = useLocalStorage<LocalizedWord>('solution', {
+    locale,
+    word: '',
+  })
   const [validationError, setValidationError] = useValidationError()
 
   const startNewGame = useCallback(() => {
@@ -53,17 +61,39 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
     console.log(
       `Started a new game (language: ${locale.toUpperCase()}, solution: ${newSolution.toUpperCase()})`
     )
-  }, [locale, setValidationError, solutions])
+  }, [
+    locale,
+    setCurrentGuess,
+    setSolution,
+    setSubmittedGuesses,
+    setValidationError,
+    solutions,
+  ])
 
   useAutomaticGameRestarts(solution, startNewGame)
 
-  const validateGuess = useGuessValidator(submittedGuesses)
+  const availableChars = useMemo(() => {
+    const chars = LOCAL_CHARS[locale]
+    const incorrectChars = submittedGuesses
+      .flatMap(toCharArray)
+      .filter((char) => !solution.word.includes(char))
+    return chars.filter((char) => !incorrectChars.includes(char))
+  }, [submittedGuesses, locale, solution])
+
+  const validateGuess = useGuessValidator({
+    previousGuesses: submittedGuesses,
+    availableChars,
+  })
 
   useKeyboardEvents({
     onCharInput: (char) => {
       if (currentGuess.length >= WORD_LENGTH) {
         console.log(`Guess ${currentGuess} is at max length (${WORD_LENGTH})`)
         return
+      }
+
+      if (checkIncorrectChars.isEnabled && !availableChars.includes(char)) {
+        setValidationError({ type: 'illegal-char', char })
       }
 
       setCurrentGuess((guess) => guess + char.toLowerCase())
@@ -85,14 +115,6 @@ export function GameProvider({ children }: PropsWithChildren<unknown>) {
       ])
     },
   })
-
-  const availableChars = useMemo(() => {
-    const chars = LOCAL_CHARS[locale]
-    const incorrectChars = submittedGuesses
-      .flatMap(toCharArray)
-      .filter((char) => !solution.word.includes(char))
-    return chars.filter((char) => !incorrectChars.includes(char))
-  }, [submittedGuesses, locale, solution])
 
   const context: GameContext = {
     currentGuess,
